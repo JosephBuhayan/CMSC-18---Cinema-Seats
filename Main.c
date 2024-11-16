@@ -110,6 +110,7 @@ int print_movie_seats_lowerBox(){ //prints the movies seats for lowerbox
     printf("                             ");
     print_with_dash("Cinema Seats Lower Box");
     for (int i = 0; i < ROWLOWERBOX; i++) { // row loop
+    printf("              ");
         for (int j = 0; j < COLUMNLOWERBOX; j++) { // column loop
             int isOccupied = 0; // Flag to check if seat is occupied
             for (int k = 0; k < 151; k++) { // Check if seat is in occupied array
