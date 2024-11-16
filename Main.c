@@ -36,7 +36,8 @@ int seatsUpperBox[ROWSUPPERBOX][COLUMNSUPPERBOX] = {
 };
 int movie_count = MAX_MOVIES;
 int movie_to_watch;
-
+int UserNumberOfSeats, UserChosenUpperBoxSeats[150], UserChosenlowerBoxSeats[150];
+char UserChosenBox[20];
 
 void get_movie_titles(char movies[][MAX_TITLE_LENGTH], int count) {
     for (int i = 0; i < count; i++) {
@@ -88,7 +89,21 @@ void print_movie(char movies[]){
     printf("Rating: G\n");
 }
 
-int print_movie_seats_upperBox(){
+int print_movie_seats_lowerBox(){
+    printf("                             ");
+    print_with_dash("Cinema Seats Lower Box");
+    for (int i = 0; i < ROWLOWERBOX; i++) {
+        printf("              "); // Add padding here for left alignment
+        for (int j = 0; j < COLUMNLOWERBOX; j++) {
+            printf("[L%-3d] ", seatsLowerBox[i][j]); // %-3d pads to 3 characters
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+int print_movie_seats_upperBox() {
+    printf("                             ");
     print_with_dash("Cinema Seats Lower Box");
     for (int i = 0; i < ROWSUPPERBOX; i++) {
         for (int j = 0; j < COLUMNSUPPERBOX; j++) {
@@ -96,18 +111,28 @@ int print_movie_seats_upperBox(){
         }
         printf("\n");
     }
+    printf("\n");
 }
 
-int print_movie_seats_lowerBox(){
-    print_with_dash("Cinema Seats Lower Box");
-    for (int i = 0; i < ROWLOWERBOX; i++) {
-        for (int j = 0; j < COLUMNLOWERBOX; j++) {
-            printf("[L%-3d] ", seatsLowerBox[i][j]); // %-3d pads to 3 characters
-        }
+void user_choose_seats_lower(){
+    printf("How many seats are you buying?\n"); //lowerbox
+    scanf(" %d", &UserNumberOfSeats);
+    for (int i = 0; i < UserNumberOfSeats; i++){
+        printf("Seat #%d: ", i);
+        scanf(" %d", UserChosenlowerBoxSeats[i]);
         printf("\n");
     }
 }
 
+void user_choose_seats_upper(){
+    printf("How many seats are you buying?\n"); //lowerbox
+    scanf(" %d", &UserNumberOfSeats);
+    for (int i = 0; i < UserNumberOfSeats; i++){
+        printf("Seat #%d: ", i);
+        scanf(" %d", UserChosenUpperBoxSeats[i]);
+        printf("\n");
+    }
+}
 
 int main(){
 
@@ -126,6 +151,21 @@ int main(){
         print_movie(movies[0]);
         print_movie_seats_lowerBox();
         print_movie_seats_upperBox();
+        printf("Where do you wanna go? Lower Box or Upper Box?\n");
+        scanf(" %19s", &UserChosenBox);
+        if (strcmp(UserChosenBox, "Lower") == 0) {
+            user_choose_seats_lower();
+        }
+        else if(strcmp(UserChosenBox, "Lower Box")){
+            user_choose_seats_lower();
+        }
+        else if(strcmp(UserChosenBox, "Upper")){
+            user_choose_seats_lower();
+        }   
+        else if(strcmp(UserChosenBox, "Upper Box")){
+            user_choose_seats_lower();
+        }        
+        
         break;
     case 2:
         print_movie(movies[1]);
