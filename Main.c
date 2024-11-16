@@ -8,7 +8,7 @@
 #define COLUMNSUPPERBOX 14
 
 char movies[MAX_MOVIES][MAX_TITLE_LENGTH];
-int seatsLowerBox[ROWLOWERBOX][COLUMNLOWERBOX] = {
+int seatsLowerBox[ROWLOWERBOX][COLUMNLOWERBOX] = {// the seats for lowerbox
         {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
         {11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
         {21, 22, 23, 24, 25, 26, 27, 28, 29, 30},
@@ -24,7 +24,7 @@ int seatsLowerBox[ROWLOWERBOX][COLUMNLOWERBOX] = {
         {121, 122, 123, 124, 125, 126, 127, 128, 129, 130},
         {131, 132, 133, 134, 135, 136, 137, 138, 139, 140},
         {141, 142, 143, 144, 145, 146, 147, 148, 149, 150}};
-int seatsUpperBox[ROWSUPPERBOX][COLUMNSUPPERBOX] = {
+int seatsUpperBox[ROWSUPPERBOX][COLUMNSUPPERBOX] = {// the seats for upperbox
         {1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14},
         {15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28},
         {29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42},
@@ -34,12 +34,13 @@ int seatsUpperBox[ROWSUPPERBOX][COLUMNSUPPERBOX] = {
         {85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98},
         {99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112}
 };
-int movie_count = MAX_MOVIES;
-int movie_to_watch;
-int UserNumberOfSeats, UserChosenUpperBoxSeats[150], UserChosenlowerBoxSeats[150];
-char UserChosenBox[20];
+int movie_count = MAX_MOVIES; // movie count
+int movie_to_watch;// the user inputted choice of movie is saved here
+int UserNumberOfSeats, UserChosenUpperBoxSeats[200], UserChosenlowerBoxSeats[200]; // user number of seats is how many seats the user wanna buy/chose. The others is the array of all occupied seats
+int OccupiedSeatsLowerBox[200], OccupiedSeatsUpperBox[200];// Array of all occupied seats on both boxes
+char UserChosenBox[20]; // Upperbox or Lower box
 
-void get_movie_titles(char movies[][MAX_TITLE_LENGTH], int count) {
+void get_movie_titles(char movies[][MAX_TITLE_LENGTH], int count) {// gets the list of all movies na showing sa cinehan
     for (int i = 0; i < count; i++) {
         printf("Enter title for movie %d: ", i + 1);
         fgets(movies[i], MAX_TITLE_LENGTH, stdin);
@@ -52,7 +53,7 @@ void get_movie_titles(char movies[][MAX_TITLE_LENGTH], int count) {
     }
 }
 
-void print_with_dash(const char *str) {
+void print_with_dash(const char *str) {//just prints the entered string with dashes ex. --hello--
     int maxLength = 40;
     int strLength = strlen(str);
     
@@ -82,27 +83,52 @@ void print_with_dash(const char *str) {
     printf("\n");
 }
 
-void print_movie(char movies[]){
+void print_movie(char movies[]){ //prints the header kumbaga
     printf("----------------------------------------\n");
     printf("Movie Title: %s\n", movies);
     printf("Genre: Whatever the genre of this movie\n");
     printf("Rating: G\n");
 }
 
-int print_movie_seats_lowerBox(){
+int find_the_first_index_with_zero_lowerbox(int OccupiedSeatsLowerBox[]) {
+    for (int i = 0; i < 151; i++) {
+        if (OccupiedSeatsLowerBox[i] == 0) {
+            return i;  // Return the index of the first 0 found
+        }
+    }
+}
+
+int find_the_first_index_with_zero_upperbox(int OccupiedSeatsUpperBox[]) {
+    for (int i = 0; i < 151; i++) {
+        if (OccupiedSeatsUpperBox[i] == 0) {
+            return i;  // Return the index of the first 0 found
+        }
+    }
+}
+
+int print_movie_seats_lowerBox(){ //prints the movies seats for lowerbox
     printf("                             ");
     print_with_dash("Cinema Seats Lower Box");
-    for (int i = 0; i < ROWLOWERBOX; i++) {
-        printf("              "); // Add padding here for left alignment
-        for (int j = 0; j < COLUMNLOWERBOX; j++) {
-            printf("[L%-3d] ", seatsLowerBox[i][j]); // %-3d pads to 3 characters
+    for (int i = 0; i < ROWLOWERBOX; i++) { // row loop
+        for (int j = 0; j < COLUMNLOWERBOX; j++) { // column loop
+            int isOccupied = 0; // Flag to check if seat is occupied
+            for (int k = 0; k < 151; k++) { // Check if seat is in occupied array
+                if (OccupiedSeatsLowerBox[k] == seatsLowerBox[i][j]) {
+                    isOccupied = 1;
+                    break;
+                }
+            }
+            if (isOccupied == 1) {
+                printf("[ XX ]");
+            } else {
+                printf("[L%-3d]", seatsLowerBox[i][j]);
+            }
         }
         printf("\n");
     }
-    printf("\n");
 }
 
-int print_movie_seats_upperBox() {
+int print_movie_seats_upperBox() {//prints the movies seats for upperbox
     printf("                             ");
     print_with_dash("Cinema Seats Upper Box");
     for (int i = 0; i < ROWSUPPERBOX; i++) {
@@ -114,36 +140,77 @@ int print_movie_seats_upperBox() {
     printf("\n");
 }
 
-void user_choose_seats_lower(){
-    printf("How many seats are you buying?\n"); //lowerbox
+void user_choose_seats_lower(){// where the user inputs his/her chosen seats in the lower box
+    int index, count = 0;
+    printf("How many seats are you buying?\n"); // lowerbox
     scanf(" %d", &UserNumberOfSeats);
-    for (int i = 0; i < UserNumberOfSeats; i++){
+    for (int i = 0; i < UserNumberOfSeats; i++){// loops through and gets all the seats the costumer want
+        EnterASeat1:
         printf("Seat #%d: \n", i+1);
-        scanf(" %d", &UserChosenlowerBoxSeats[i]);
+        scanf(" %d", &UserChosenlowerBoxSeats[i]); 
+        if (UserChosenlowerBoxSeats[i] <= 0 || UserChosenlowerBoxSeats[i] >= 151){// checks if the seat input is within range
+            printf("There is no seat %d\n", UserChosenlowerBoxSeats[i]);
+            printf("Enter a new seat");
+            goto EnterASeat1; 
+        }
     }
+
     printf("You chose seat/s: ");
     for(int i = 0; i < UserNumberOfSeats; i++){
         printf("%d ", UserChosenlowerBoxSeats[i]);
     }
+    
+    index = find_the_first_index_with_zero_lowerbox(OccupiedSeatsLowerBox);
+    for (int i = index; i < (index + UserNumberOfSeats); i++){
+        OccupiedSeatsLowerBox[i] = UserChosenlowerBoxSeats[count];
+        count++;
+    }
+
+    printf("Occupied seat/s are: ");
+    for(int i = 0; i < index + count; i++){
+        printf("%d ", OccupiedSeatsLowerBox[i]);
+    }
+    printf("\n"); 
+
+    index = find_the_first_index_with_zero_lowerbox(OccupiedSeatsLowerBox);
+    printf("index is %d", index);
 }
 
-void user_choose_seats_upper(){
-    printf("How many seats are you buying?\n"); //lowerbox
+void user_choose_seats_upper(){// where the user inputs his/her chosen seats in the upper box
+    int count = 0, index;
+    printf("How many seats are you buying?\n"); // upperbox
     scanf(" %d", &UserNumberOfSeats);
-    for (int i = 0; i < UserNumberOfSeats; i++){
+    for (int i = 0; i < UserNumberOfSeats; i++){ // loops through and gets all the seats the costumer want
+        EnterASeat2:
         printf("Seat #%d: \n", i+1);
         scanf(" %d", &UserChosenUpperBoxSeats[i]);
+        if (UserChosenUpperBoxSeats[i] <= 0 || UserChosenUpperBoxSeats[i] >= 113){// checks if the seat input is within range
+            printf("There is no seat %d\n", UserChosenlowerBoxSeats[i]);
+            printf("Enter a new seat");
+            goto EnterASeat2; 
+        }
     }
+    
     printf("You chose seat/s: ");
     for(int i = 0; i < UserNumberOfSeats; i++){
-        printf("%d ", UserChosenlowerBoxSeats[i]);
+        printf("%d ", UserChosenUpperBoxSeats[i]);
     }
+ 
+    index = find_the_first_index_with_zero_upperbox(OccupiedSeatsUpperBox);
+    for (int i = index; i < UserNumberOfSeats; i++){
+        OccupiedSeatsUpperBox[i] = UserChosenUpperBoxSeats[0 + count];
+        count++;
+    }
+    printf("Occupied seat/s are: ");
+    for(int i = 0; i < UserNumberOfSeats; i++){
+        printf("%d ", OccupiedSeatsUpperBox[i]);
+    } 
 }
 
 int main(){
 
     get_movie_titles(movies, movie_count);// if admin rani
-
+    start:
     print_with_dash("Good Day Costumer");
     print_with_dash("Welcome to Group 2 Cinema");
     printf("The Movies Showing Today Are:\n");
@@ -163,19 +230,20 @@ int main(){
         if (strcmp(UserChosenBox, "Lower") == 0) {
             user_choose_seats_lower();
         }
-        else if(strcmp(UserChosenBox, "Lower Box")){
+        else if(strcmp(UserChosenBox, "Lower Box" ) == 0){
             user_choose_seats_lower();
         }
-        else if(strcmp(UserChosenBox, "Upper")){
+        else if(strcmp(UserChosenBox, "Upper") == 0){
             user_choose_seats_upper();
         }   
-        else if(strcmp(UserChosenBox, "Upper Box")){
+        else if(strcmp(UserChosenBox, "Upper Box") == 0){
             user_choose_seats_upper();
         }
         else{
             printf("Choose Again");
             goto choose;
-        }        
+        }     
+        goto start;   
         break;
     case 2:
         print_movie(movies[1]);
