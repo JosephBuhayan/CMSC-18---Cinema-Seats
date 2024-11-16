@@ -104,7 +104,7 @@ int print_movie_seats_lowerBox(){
 
 int print_movie_seats_upperBox() {
     printf("                             ");
-    print_with_dash("Cinema Seats Lower Box");
+    print_with_dash("Cinema Seats Upper Box");
     for (int i = 0; i < ROWSUPPERBOX; i++) {
         for (int j = 0; j < COLUMNSUPPERBOX; j++) {
             printf("[U%-3d] ", seatsUpperBox[i][j]); // %-3d pads to 3 characters
@@ -118,9 +118,12 @@ void user_choose_seats_lower(){
     printf("How many seats are you buying?\n"); //lowerbox
     scanf(" %d", &UserNumberOfSeats);
     for (int i = 0; i < UserNumberOfSeats; i++){
-        printf("Seat #%d: ", i);
-        scanf(" %d", UserChosenlowerBoxSeats[i]);
-        printf("\n");
+        printf("Seat #%d: \n", i+1);
+        scanf(" %d", &UserChosenlowerBoxSeats[i]);
+    }
+    printf("You chose seat/s: ");
+    for(int i = 0; i < UserNumberOfSeats; i++){
+        printf("%d ", UserChosenlowerBoxSeats[i]);
     }
 }
 
@@ -128,9 +131,12 @@ void user_choose_seats_upper(){
     printf("How many seats are you buying?\n"); //lowerbox
     scanf(" %d", &UserNumberOfSeats);
     for (int i = 0; i < UserNumberOfSeats; i++){
-        printf("Seat #%d: ", i);
-        scanf(" %d", UserChosenUpperBoxSeats[i]);
-        printf("\n");
+        printf("Seat #%d: \n", i+1);
+        scanf(" %d", &UserChosenUpperBoxSeats[i]);
+    }
+    printf("You chose seat/s: ");
+    for(int i = 0; i < UserNumberOfSeats; i++){
+        printf("%d ", UserChosenlowerBoxSeats[i]);
     }
 }
 
@@ -151,6 +157,7 @@ int main(){
         print_movie(movies[0]);
         print_movie_seats_lowerBox();
         print_movie_seats_upperBox();
+        choose:
         printf("Where do you wanna go? Lower Box or Upper Box?\n");
         scanf(" %19s", &UserChosenBox);
         if (strcmp(UserChosenBox, "Lower") == 0) {
@@ -160,12 +167,15 @@ int main(){
             user_choose_seats_lower();
         }
         else if(strcmp(UserChosenBox, "Upper")){
-            user_choose_seats_lower();
+            user_choose_seats_upper();
         }   
         else if(strcmp(UserChosenBox, "Upper Box")){
-            user_choose_seats_lower();
+            user_choose_seats_upper();
+        }
+        else{
+            printf("Choose Again");
+            goto choose;
         }        
-        
         break;
     case 2:
         print_movie(movies[1]);
