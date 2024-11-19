@@ -122,7 +122,7 @@ void print_movie(char movies[]){ //prints the header kumbaga
     printf("Rating: G\n");
 }
 
-int find_the_first_index_with_zero_lowerbox(int OccupiedSeatsLowerBox[]) {
+int find_the_first_index_with_zero_lowerbox(int OccupiedSeatsLowerBox[]) { // this basically functions as the append() function, mag start og add numbers sa first index na may 0 or sa last item. safe ni kay wala may 0 na seat number 
     int i;
 	for (i = 0; i < 151; i++) {
         if (OccupiedSeatsLowerBox[i] == 0) {
@@ -131,7 +131,7 @@ int find_the_first_index_with_zero_lowerbox(int OccupiedSeatsLowerBox[]) {
     }
 }
 
-int find_the_first_index_with_zero_upperbox(int OccupiedSeatsUpperBox[]) {
+int find_the_first_index_with_zero_upperbox(int OccupiedSeatsUpperBox[]) { // this basically functions as the append() function, mag start og add numbers sa first index na may 0 or sa last item. safe ni kay wala may 0 na seat number 
     int i;
 	for (i = 0; i < 151; i++) {
         if (OccupiedSeatsUpperBox[i] == 0) {
@@ -181,22 +181,11 @@ int print_movie_seats_upperBox() {//prints the movies seats for upperbox
             if (isOccupied == 1) {
                 printf("[ XX ]");
             } else {
-                printf("[L%-3d]", seatsUpperBox[i][j]);
+                printf("[U%-3d]", seatsUpperBox[i][j]);
             }
         }
         printf("\n");
     }
-    
-    /*int i, j;
-	printf("                             ");
-    print_with_dash("Cinema Seats Upper Box");
-    for (i = 0; i < ROWSUPPERBOX; i++) {
-        for (j = 0; j < COLUMNSUPPERBOX; j++) {
-            printf("[U%-3d] ", seatsUpperBox[i][j]); // %-3d pads to 3 characters
-        }
-        printf("\n");
-    }
-    printf("\n");*/
 }
 
 void user_choose_seats_lower(){// where the user inputs his/her chosen seats in the lower box
@@ -216,10 +205,10 @@ void user_choose_seats_lower(){// where the user inputs his/her chosen seats in 
 
     printf("You chose seat/s: ");
     for(i = 0; i < UserNumberOfSeats; i++){
-        printf("%d ", UserChosenlowerBoxSeats[i]);
+        printf("%d ", UserChosenlowerBoxSeats[i]); // output chosen seats. for checking, pwede tanggalin or hindi sa final code
     }
     
-    index = find_the_first_index_with_zero_lowerbox(OccupiedSeatsLowerBox);
+    index = find_the_first_index_with_zero_lowerbox(OccupiedSeatsLowerBox); // append() function. gina find niya ang index na may 0. or the index next to that last number/seat
     for (i = index; i < (index + UserNumberOfSeats); i++){
         OccupiedSeatsLowerBox[i] = UserChosenlowerBoxSeats[count];
         count++;
@@ -227,12 +216,12 @@ void user_choose_seats_lower(){// where the user inputs his/her chosen seats in 
 
     printf("Occupied seat/s are: ");
     for(i = 0; i < index + count; i++){
-        printf("%d ", OccupiedSeatsLowerBox[i]);
+        printf("%d ", OccupiedSeatsLowerBox[i]); // output occupied seats. for checking, pwede tanggalin or hindi sa final code
     }
     printf("\n"); 
 
     index = find_the_first_index_with_zero_lowerbox(OccupiedSeatsLowerBox);
-    printf("index is %d", index);
+    printf("index is %d", index);// output index seats. for checking, tanggalin ito sa final code
 }
 
 void user_choose_seats_upper(){// where the user inputs his/her chosen seats in the upper box
@@ -252,10 +241,10 @@ void user_choose_seats_upper(){// where the user inputs his/her chosen seats in 
 
     printf("You chose seat/s: ");
     for(i = 0; i < UserNumberOfSeats; i++){
-        printf("%d ", UserChosenUpperBoxSeats[i]);
+        printf("%d ", UserChosenUpperBoxSeats[i]); // output chosen seats. for checking, pwede tanggalin or hindi sa final code
     }
     
-    index = find_the_first_index_with_zero_upperbox(OccupiedSeatsUpperBox);
+    index = find_the_first_index_with_zero_upperbox(OccupiedSeatsUpperBox); // append() function. gina find niya ang index na may 0. or the index next to that last number/seat
     for (i = index; i < (index + UserNumberOfSeats); i++){
         OccupiedSeatsUpperBox[i] = UserChosenUpperBoxSeats[count];
         count++;
@@ -263,43 +252,12 @@ void user_choose_seats_upper(){// where the user inputs his/her chosen seats in 
 
     printf("Occupied seat/s are: ");
     for(i = 0; i < index + count; i++){
-        printf("%d ", OccupiedSeatsUpperBox[i]);
+        printf("%d ", OccupiedSeatsUpperBox[i]);  // output occupied seats. for checking, pwede tanggalin or hindi sa final code
     }
     printf("\n"); 
 
     index = find_the_first_index_with_zero_upperbox(OccupiedSeatsUpperBox);
-    printf("index is %d", index);
-    
-    
-    
-    /*int i, count = 0, index;
-    printf("How many seats are you buying?\n"); // upperbox
-    scanf(" %d", &UserNumberOfSeats);
-    for (i = 0; i < UserNumberOfSeats; i++){ // loops through and gets all the seats the costumer want
-        EnterASeat2:
-        printf("Seat #%d: \n", i+1);
-        scanf(" %d", &UserChosenUpperBoxSeats[i]);
-        if (UserChosenUpperBoxSeats[i] <= 0 || UserChosenUpperBoxSeats[i] >= 113){// checks if the seat input is within range
-            printf("There is no seat %d\n", UserChosenlowerBoxSeats[i]);
-            printf("Enter a new seat");
-            goto EnterASeat2; 
-        }
-    }
-    
-    printf("You chose seat/s: ");
-    for(i = 0; i < UserNumberOfSeats; i++){
-        printf("%d ", UserChosenUpperBoxSeats[i]);
-    }
- 
-    index = find_the_first_index_with_zero_upperbox(OccupiedSeatsUpperBox);
-    for (i = index; i < UserNumberOfSeats; i++){
-        OccupiedSeatsUpperBox[i] = UserChosenUpperBoxSeats[0 + count];
-        count++;
-    }
-    printf("Occupied seat/s are: ");
-    for(i = 0; i < UserNumberOfSeats; i++){
-        printf("%d ", OccupiedSeatsUpperBox[i]);
-    }*/
+    printf("index is %d", index); // output index seats. for checking, tanggalin ito sa final code
 }
 
 int main(){
