@@ -52,23 +52,31 @@ void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_L
     int choice;
     int keep_running = 1;
 
+    FILE *movie, *genre, *synopsis;
+
     do{
         do{
             printf("MENU OPTIONS AS AN ADMIN:\n");
             printf("[1]Enter movie titles\n[2]Enter movie genres\n[3]Enter movie description\n[4]Exit admin mode\nOption: ");
             scanf(" %d", &choice);
+
+            while (getchar() != '\n');
+
             if(!(choice>0 && choice <5)){
                 printf("Invalid input! Please try again...\n");
             }
+
         }while(!(choice>0 && choice <5));
         switch(choice){
             case 1:
+                movie = fopen("movieTitles.txt", "w"); 
+                if (movie == NULL) {
+                    perror("Error opening file");
+                    break;
+                }
                 // Ensure input is handled correctly for each movie
                 for (i = 0; i < count; i++) {
                     printf("\tEnter title for movie %d: ", i + 1);
-
-                    // Clear stdin before reading (useful if called after scanf)
-                    fflush(stdin);
 
                     // Read input safely using fgets
                     if (fgets(movies[i], MAX_TITLE_LENGTH, stdin) != NULL) {
@@ -77,45 +85,62 @@ void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_L
                         if (length > 0 && movies[i][length - 1] == '\n') {
                             movies[i][length - 1] = '\0';
                         }
+
+                        fprintf(movie, "%s\n", movies[i]);
                     } else {
                         printf("Error reading movie title. Please try again.\n");
                         i--; // Repeat this iteration if input fails
                     }
                 }
+                fclose(movie);
                 break;
             case 2:
+                genre = fopen("genres.txt", "w"); 
+                if (genre == NULL) {
+                    perror("Error opening file");
+                    break;
+                }
                 for(i = 0; i < count; i++){
                     printf("Enter genre for movie %d: ", i + 1);
-
-                    fflush(stdin);
 
                     if (fgets(genres[i], MAX_TITLE_LENGTH, stdin) != NULL) {
                         size_t length = strlen(genres[i]);
                         if (length > 0 && genres[i][length - 1] == '\n') {
                             genres[i][length - 1] = '\0';
                         }
+
+                        fprintf(genre, "%s\n", genres[i]);
+
                     } else {
                         printf("Error reading genre description. Please try again.\n");
                         i--; // Repeat this iteration if input fails
                     }
                 }
+                fclose(genre);
                 break;
             case 3:
+                synopsis = fopen("synopsis.txt", "w"); 
+                if (synopsis == NULL) {
+                    perror("Error opening file");
+                    break;
+                }
+
                 for(i = 0; i < count; i++){
                     printf("Enter description for movie %d: ", i + 1);
 
-                    fflush(stdin);
 
                     if (fgets(description[i], MAX_TITLE_LENGTH, stdin) != NULL) {
-                        size_t length = strlen(genres[i]);
+                        size_t length = strlen(description[i]);
                         if (length > 0 && description[i][length - 1] == '\n') {
                             description[i][length - 1] = '\0';
                         }
+                        fprintf(synopsis, "%s\n", description[i]);
                     } else {
                         printf("Error reading genre description. Please try again.\n");
                         i--; // Repeat this iteration if input fails
                     }
                 }
+                fclose(synopsis);   
                 break;
             case 4:
                 printf("Exiting admin mode...");
@@ -125,8 +150,8 @@ void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_L
         }
         system("cls");
     }while(keep_running);
-}
 
+}
 
 void print_GUI (){
 	printf("        Welcome to CINEMA SEATS\n");
