@@ -333,21 +333,18 @@ int main(){
 		printf("Admin Password: "); //Password is 123;
 		scanf(" %d", &password_try);
 		//sleep(1);
-		if(password == password_try)
-		{
-			
+		if(password == password_try){
 	        get_movie_titles(movies, genres, description, movie_count);// if admin 
 			system("cls");
 			goto start;
-		} else
-		{
+		} else{
 			puts("Wrong Password");
 			//sleep(2);
 			system("cls");
 			goto invalid_option;
 		}
 	} else if (option == 2){
-		    goto buy_tickets;
+		goto buy_tickets;
 	} else if (option ==3){
         system("cls");
         print_GUI();
@@ -357,9 +354,9 @@ int main(){
         }
 
         while (1) {
-        printf("========================");
-        printf("\n\n[1] Leave \nOptions: ");
-        scanf("%d", &leave);
+            printf("========================");
+            printf("\n\n[1] Leave \nOptions: ");
+            scanf("%d", &leave);
 
             if (leave == 1) {
                 printf("You entered 1. Exiting the loop.\n");
