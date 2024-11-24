@@ -346,35 +346,31 @@ int main(){
 			system("cls");
 			goto invalid_option;
 		}
-		
-	} else if (option == 2)
-	{
+	} else if (option == 2){
 		    goto buy_tickets;
-		    
-	} else if (option ==3)
-	{
-				system("cls");
-			    print_GUI();
-			    printf("The Movies Showing Today Are:\n");
-			    for (i = 0; i < movie_count; i++) {// print movie list
-			        printf("[%d] %s\n", i + 1, movies[i]);
-			    }
-	
-				    while (1) {
-				   	printf("========================");
-			        printf("\n\n[1] Leave \nOptions: ");
-			        scanf("%d", &leave);
-			
-				        if (leave == 1) {
-				            printf("You entered 1. Exiting the loop.\n");
-				            break; // Exit the loop when input is 1
-				        } else {
-				            printf("You entered %d. Try again.\n", leave);
-				        }
-			    	}
-		    	system("cls");
-				goto start;
-		
+	} else if (option ==3){
+        system("cls");
+        print_GUI();
+        printf("The Movies Showing Today Are:\n");
+        for (i = 0; i < movie_count; i++) {// print movie list
+            printf("[%d] %s\n\tGenre: %s\n\tSynopsis: %s\n", i + 1, movies[i], genres[i], description[i]);
+        }
+
+        while (1) {
+        printf("========================");
+        printf("\n\n[1] Leave \nOptions: ");
+        scanf("%d", &leave);
+
+            if (leave == 1) {
+                printf("You entered 1. Exiting the loop.\n");
+                break; // Exit the loop when input is 1
+            } else {
+                printf("You entered %d. Try again.\n", leave);
+            }
+        }
+        system("cls");
+        goto start;
+
 	} else {
 		puts("Invalid Input!");
 		sleep(2);
