@@ -585,4 +585,6 @@ int main(){
     fclose(movie);
     fclose(genre);
     fclose(synopsis);
+
+    return 0;
 }
