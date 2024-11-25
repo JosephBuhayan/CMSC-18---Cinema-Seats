@@ -13,7 +13,7 @@
 
 char movies[MAX_MOVIES][MAX_TITLE_LENGTH];
 char genres[MAX_MOVIES][MAX_TITLE_LENGTH];
-char description[MAX_MOVIES][MAX_TITLE_LENGTH];
+char description[MAX_MOVIES][1000];
 
 int seatsLowerBox[ROWLOWERBOX][COLUMNLOWERBOX] = {// the seats for lowerbox
         {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
@@ -47,7 +47,7 @@ int UserNumberOfSeats, UserChosenUpperBoxSeats[200], UserChosenlowerBoxSeats[200
 int OccupiedSeatsLowerBox[200], OccupiedSeatsUpperBox[200];// Array of all occupied seats on both boxes
 char UserChosenBox[20]; // Upperbox or Lower box
 
-void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_LENGTH], char description[][MAX_TITLE_LENGTH], int count) {
+void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_LENGTH], char description[][1000], int count) {
     int i;
     int choice;
     int keep_running = 1;
@@ -129,7 +129,7 @@ void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_L
                     printf("Enter description for movie %d: ", i + 1);
 
 
-                    if (fgets(description[i], MAX_TITLE_LENGTH, stdin) != NULL) {
+                    if (fgets(description[i], 1000, stdin) != NULL) {
                         size_t length = strlen(description[i]);
                         if (length > 0 && description[i][length - 1] == '\n') {
                             description[i][length - 1] = '\0';
@@ -201,7 +201,7 @@ void print_with_dash(const char *str) {//just prints the entered string with das
 void print_movie(char movies[], char genres[], char description[]){ //prints the header kumbaga
     printf("----------------------------------------\n");
     printf("Movie Title: %s\n", movies);
-    printf("Genre: %s\n", genres);
+    printf("Genre: %s\n\n", genres);
     printf("Synopsis: %s\n", description);
     printf("Rating: G\n");
 }
@@ -344,7 +344,43 @@ void user_choose_seats_upper(){// where the user inputs his/her chosen seats in 
     printf("index is %d", index); // output index seats. for checking, tanggalin ito sa final code
 }
 
+void readFiles(FILE *file, char stored[][MAX_TITLE_LENGTH], int count){
+    int i = 0;
+    while (i < MAX_MOVIES && fgets(stored[i], MAX_TITLE_LENGTH, file)) {
+        size_t len = strlen(stored[i]);
+        if (len > 0 && stored[i][len - 1] == '\n') {
+            stored[i][len - 1] = '\0';
+        }
+        i++;
+    }
+
+}
+void readFilesDescription(FILE *file, char stored[][1000], int count){
+    int i = 0;
+    while (i < MAX_MOVIES && fgets(stored[i], 1000, file)) {
+        size_t len = strlen(stored[i]);
+        if (len > 0 && stored[i][len - 1] == '\n') {
+            stored[i][len - 1] = '\0';
+        }
+        i++;
+    }
+
+}
+
 int main(){
+    FILE *movie = fopen("movieTitles.txt", "r");
+    FILE *genre = fopen("genres.txt", "r");
+    FILE *synopsis = fopen("synopsis.txt", "r");
+
+    if (movie == NULL || genre == NULL || synopsis == NULL) {
+        printf("Error opening one or more files.\n");
+        return 1;
+    }
+
+    readFiles(movie, movies, movie_count);
+    readFiles(genre, genres, movie_count);
+    readFilesDescription(synopsis, description, movie_count);
+
 	invalid_option:
 	start:
 	print_GUI();
@@ -375,7 +411,7 @@ int main(){
         print_GUI();
         printf("The Movies Showing Today Are:\n");
         for (i = 0; i < movie_count; i++) {// print movie list
-            printf("[%d] %s\n\tGenre: %s\n\tSynopsis: %s\n", i + 1, movies[i], genres[i], description[i]);
+            printf("[%d] %s\n\tGenre: %s\n\n\tSynopsis: %s\n", i + 1, movies[i], genres[i], description[i]);
         }
 
         while (1) {
@@ -545,4 +581,8 @@ int main(){
     }
 
 	goto start;
+    
+    fclose(movie);
+    fclose(genre);
+    fclose(synopsis);
 }
