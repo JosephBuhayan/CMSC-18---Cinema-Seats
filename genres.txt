@@ -1,5 +1,5 @@
-Sci-fi
-Adventure
-Action
+Sci-fi/Action
+Family/Adventure
 Horror
-Slice of life
+Action
+Drama/Crime

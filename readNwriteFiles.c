@@ -57,7 +57,7 @@ void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_L
     do{
         do{
             printf("MENU OPTIONS AS AN ADMIN:\n");
-            printf("[1]Enter movie titles\n[2]Enter movie genres\n[3]Enter movie description\n[4]Exit admin mode\nOption: ");
+            printf("\t[1]Enter movie titles\n\t[2]Enter movie genres\n\t[3]Enter movie description\n\t[4]Exit admin mode\nOption: ");
             scanf(" %d", &choice);
 
             while (getchar() != '\n');
@@ -76,7 +76,7 @@ void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_L
                 }
                 // Ensure input is handled correctly for each movie
                 for (i = 0; i < count; i++) {
-                    printf("\tEnter title for movie %d: ", i + 1);
+                    printf("\tEnter title for movie [%d]: ", i + 1);
 
                     // Read input safely using fgets
                     if (fgets(movies[i], MAX_TITLE_LENGTH, stdin) != NULL) {
@@ -101,7 +101,7 @@ void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_L
                     break;
                 }
                 for(i = 0; i < count; i++){
-                    printf("Enter genre for movie %d: ", i + 1);
+                    printf("Enter genre for movie [%d] %s: ", i + 1, movies[i]);
 
                     if (fgets(genres[i], MAX_TITLE_LENGTH, stdin) != NULL) {
                         size_t length = strlen(genres[i]);
@@ -126,7 +126,7 @@ void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_L
                 }
 
                 for(i = 0; i < count; i++){
-                    printf("Enter description for movie %d: ", i + 1);
+                    printf("Enter description for movie [%d] %s: ", i + 1, movies[i]);
 
 
                     if (fgets(description[i], 1000, stdin) != NULL) {
@@ -162,9 +162,9 @@ void print_GUI (){
 
 void print_menu (){
 	printf("MENU OPTIONS:\n");
-	printf("[1] Enter as ADMIN\n");
-	printf("[2] Enter as CUSTOMER\n");
-	printf("[3] View Available Movies\n");
+	printf("\t[1] Enter as ADMIN\n");
+	printf("\t[2] Enter as CUSTOMER\n");
+	printf("\t[3] View Available Movies\n");
 }
 
 void print_with_dash(const char *str) {//just prints the entered string with dashes ex. --hello--
@@ -202,7 +202,7 @@ void print_movie(char movies[], char genres[], char description[]){ //prints the
     printf("----------------------------------------\n");
     printf("Movie Title: %s\n", movies);
     printf("Genre: %s\n\n", genres);
-    printf("Synopsis: %s\n", description);
+    printf("Synopsis: %s\n\n", description);
     printf("Rating: G\n");
 }
 
@@ -411,11 +411,11 @@ int main(){
         print_GUI();
         printf("The Movies Showing Today Are:\n");
         for (i = 0; i < movie_count; i++) {// print movie list
-            printf("[%d] %s\n\tGenre: %s\n\n\tSynopsis: %s\n", i + 1, movies[i], genres[i], description[i]);
+            printf("[%d] ---------------------------------- %s ----------------------------------\n\tGenre: %s\n\n\tSynopsis: %s\n\n", i + 1, movies[i], genres[i], description[i]);
         }
 
         while (1) {
-            printf("========================");
+            printf("===================================================================================");
             printf("\n\n[1] Leave \nOptions: ");
             scanf("%d", &leave);
 
