@@ -449,7 +449,8 @@ int main(){
     printf("\nWhat are you watching today?\nOption: ");
     scanf(" %d", &movie_to_watch);
     
-    
+    while (getchar() != '\n');
+
     switch (movie_to_watch){
     case 1:
         print_movie(movies[movie_to_watch-1], genres[movie_to_watch-1], description[movie_to_watch-1]);
@@ -457,19 +458,17 @@ int main(){
         print_movie_seats_upperBox();
         choose1:
         printf("\nWhere do you wanna go?\n[Lower Box] or [Upper Box]?\nOption: ");
-        scanf(" %19s", &UserChosenBox);
-        
-        
-        if (strcmp(UserChosenBox, "Lower") == 0) {
+        fgets(UserChosenBox, sizeof(UserChosenBox), stdin);
+        UserChosenBox[strcspn(UserChosenBox, "\n")] = 0;
+
+        for(i = 0; i<strlen(UserChosenBox); i++){
+            UserChosenBox[i] = tolower(UserChosenBox[i]);
+        }
+
+        if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
             user_choose_seats_lower();
         }
-        else if(strcmp(UserChosenBox, "Lower Box" ) == 0){
-            user_choose_seats_lower();
-        }
-        else if(strcmp(UserChosenBox, "Upper") == 0){
-            user_choose_seats_upper();
-        }   
-        else if(strcmp(UserChosenBox, "Upper Box") == 0){
+        else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
             user_choose_seats_upper();
         }
         else{
@@ -484,17 +483,17 @@ int main(){
         print_movie_seats_upperBox();
         choose2:
         printf("\nWhere do you wanna go?\n[Lower Box] or [Upper Box]?\nOption: ");
-        scanf(" %19s", &UserChosenBox);
-        if (strcmp(UserChosenBox, "Lower") == 0) {
+        fgets(UserChosenBox, sizeof(UserChosenBox), stdin);
+        UserChosenBox[strcspn(UserChosenBox, "\n")] = 0;
+
+        for(i = 0; i<strlen(UserChosenBox); i++){
+            UserChosenBox[i] = tolower(UserChosenBox[i]);
+        }
+
+        if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
             user_choose_seats_lower();
         }
-        else if(strcmp(UserChosenBox, "Lower Box" ) == 0){
-            user_choose_seats_lower();
-        }
-        else if(strcmp(UserChosenBox, "Upper") == 0){
-            user_choose_seats_upper();
-        }   
-        else if(strcmp(UserChosenBox, "Upper Box") == 0){
+        else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
             user_choose_seats_upper();
         }
         else{
@@ -509,17 +508,17 @@ int main(){
         print_movie_seats_upperBox();
         choose3:
         printf("\nWhere do you wanna go?\n[Lower Box] or [Upper Box]?\nOption: ");
-        scanf(" %19s", &UserChosenBox);
-        if (strcmp(UserChosenBox, "Lower") == 0) {
+        fgets(UserChosenBox, sizeof(UserChosenBox), stdin);
+        UserChosenBox[strcspn(UserChosenBox, "\n")] = 0;
+
+        for(i = 0; i<strlen(UserChosenBox); i++){
+            UserChosenBox[i] = tolower(UserChosenBox[i]);
+        }
+
+        if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
             user_choose_seats_lower();
         }
-        else if(strcmp(UserChosenBox, "Lower Box" ) == 0){
-            user_choose_seats_lower();
-        }
-        else if(strcmp(UserChosenBox, "Upper") == 0){
-            user_choose_seats_upper();
-        }   
-        else if(strcmp(UserChosenBox, "Upper Box") == 0){
+        else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
             user_choose_seats_upper();
         }
         else{
@@ -534,17 +533,17 @@ int main(){
         print_movie_seats_upperBox();
         choose4:
         printf("\nWhere do you wanna go?\n[Lower Box] or [Upper Box]?\nOption: ");
-        scanf(" %19s", &UserChosenBox);
-        if (strcmp(UserChosenBox, "Lower") == 0) {
+        fgets(UserChosenBox, sizeof(UserChosenBox), stdin);
+        UserChosenBox[strcspn(UserChosenBox, "\n")] = 0;
+
+        for(i = 0; i<strlen(UserChosenBox); i++){
+            UserChosenBox[i] = tolower(UserChosenBox[i]);
+        }
+
+        if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
             user_choose_seats_lower();
         }
-        else if(strcmp(UserChosenBox, "Lower Box" ) == 0){
-            user_choose_seats_lower();
-        }
-        else if(strcmp(UserChosenBox, "Upper") == 0){
-            user_choose_seats_upper();
-        }   
-        else if(strcmp(UserChosenBox, "Upper Box") == 0){
+        else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
             user_choose_seats_upper();
         }
         else{
@@ -559,17 +558,17 @@ int main(){
         print_movie_seats_upperBox();
         choose5:
         printf("\nWhere do you wanna go?\n[Lower Box] or [Upper Box]?\nOption: ");
-        scanf(" %19s", &UserChosenBox);
-        if (strcmp(UserChosenBox, "Lower") == 0) {
+        fgets(UserChosenBox, sizeof(UserChosenBox), stdin);
+        UserChosenBox[strcspn(UserChosenBox, "\n")] = 0;
+
+        for(i = 0; i<strlen(UserChosenBox); i++){
+            UserChosenBox[i] = tolower(UserChosenBox[i]);
+        }
+
+        if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
             user_choose_seats_lower();
         }
-        else if(strcmp(UserChosenBox, "Lower Box" ) == 0){
-            user_choose_seats_lower();
-        }
-        else if(strcmp(UserChosenBox, "Upper") == 0){
-            user_choose_seats_upper();
-        }   
-        else if(strcmp(UserChosenBox, "Upper Box") == 0){
+        else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
             user_choose_seats_upper();
         }
         else{
