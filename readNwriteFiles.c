@@ -10,10 +10,20 @@
 #define COLUMNLOWERBOX 10
 #define ROWSUPPERBOX 8
 #define COLUMNSUPPERBOX 14
+#define MAX_SEATS 200
 
-char movies[MAX_MOVIES][MAX_TITLE_LENGTH];
-char genres[MAX_MOVIES][MAX_TITLE_LENGTH];
-char description[MAX_MOVIES][1000];
+typedef struct{
+    char titles[MAX_TITLE_LENGTH];
+    char genres[MAX_TITLE_LENGTH];
+    char description[1000];
+    int seatsLowerBox[ROWLOWERBOX][COLUMNLOWERBOX];
+    int seatsUpperBox[ROWSUPPERBOX][COLUMNSUPPERBOX];
+    int occupiedSeatsLowerBox[MAX_SEATS];
+    int occupiedSeatsUpperBox[MAX_SEATS];
+
+}Movie;
+
+Movie movies[MAX_MOVIES];
 
 int seatsLowerBox[ROWLOWERBOX][COLUMNLOWERBOX] = {// the seats for lowerbox
         {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
@@ -44,10 +54,9 @@ int seatsUpperBox[ROWSUPPERBOX][COLUMNSUPPERBOX] = {// the seats for upperbox
 int movie_count = MAX_MOVIES; // movie count
 int movie_to_watch;// the user inputted choice of movie is saved here
 int UserNumberOfSeats, UserChosenUpperBoxSeats[200], UserChosenlowerBoxSeats[200]; // user number of seats is how many seats the user wanna buy/chose. The others is the array of all occupied seats
-int OccupiedSeatsLowerBox[200], OccupiedSeatsUpperBox[200];// Array of all occupied seats on both boxes
 char UserChosenBox[20]; // Upperbox or Lower box
 
-void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_LENGTH], char description[][1000], int count) {
+void get_movie_titles(Movie movies[], int count) {
     int i;
     int choice;
     int keep_running = 1;
@@ -67,6 +76,7 @@ void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_L
             }
 
         }while(!(choice>0 && choice <5));
+
         switch(choice){
             case 1:
                 movie = fopen("movieTitles.txt", "w"); 
@@ -79,14 +89,14 @@ void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_L
                     printf("\tEnter title for movie [%d]: ", i + 1);
 
                     // Read input safely using fgets
-                    if (fgets(movies[i], MAX_TITLE_LENGTH, stdin) != NULL) {
+                    if (fgets(movies[i].titles, MAX_TITLE_LENGTH, stdin) != NULL) {
                         // Remove newline character from the input if present
-                        size_t length = strlen(movies[i]);
-                        if (length > 0 && movies[i][length - 1] == '\n') {
-                            movies[i][length - 1] = '\0';
+                        size_t length = strlen(movies[i].titles);
+                        if (length > 0 && movies[i].titles[length - 1] == '\n') {
+                            movies[i].titles[length - 1] = '\0';
                         }
 
-                        fprintf(movie, "%s\n", movies[i]);
+                        fprintf(movie, "%s\n", movies[i].titles);
                     } else {
                         printf("Error reading movie title. Please try again.\n");
                         i--; // Repeat this iteration if input fails
@@ -101,15 +111,15 @@ void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_L
                     break;
                 }
                 for(i = 0; i < count; i++){
-                    printf("Enter genre for movie [%d] %s: ", i + 1, movies[i]);
+                    printf("Enter genre for movie [%d] %s: ", i + 1, movies[i].titles);
 
-                    if (fgets(genres[i], MAX_TITLE_LENGTH, stdin) != NULL) {
-                        size_t length = strlen(genres[i]);
-                        if (length > 0 && genres[i][length - 1] == '\n') {
-                            genres[i][length - 1] = '\0';
+                    if (fgets(movies[i].genres, MAX_TITLE_LENGTH, stdin) != NULL) {
+                        size_t length = strlen(movies[i].genres);
+                        if (length > 0 && movies[i].genres[length - 1] == '\n') {
+                            movies[i].genres[length - 1] = '\0';
                         }
 
-                        fprintf(genre, "%s\n", genres[i]);
+                        fprintf(genre, "%s\n", movies[i].genres);
 
                     } else {
                         printf("Error reading genre description. Please try again.\n");
@@ -126,15 +136,15 @@ void get_movie_titles(char movies[][MAX_TITLE_LENGTH], char genres[][MAX_TITLE_L
                 }
 
                 for(i = 0; i < count; i++){
-                    printf("Enter description for movie [%d] %s: ", i + 1, movies[i]);
+                    printf("Enter description for movie [%d] %s: ", i + 1, movies[i].titles);
 
 
-                    if (fgets(description[i], 1000, stdin) != NULL) {
-                        size_t length = strlen(description[i]);
-                        if (length > 0 && description[i][length - 1] == '\n') {
-                            description[i][length - 1] = '\0';
+                    if (fgets(movies[i].description, 1000, stdin) != NULL) {
+                        size_t length = strlen(movies[i].description);
+                        if (length > 0 && movies[i].description[length - 1] == '\n') {
+                            movies[i].description[length - 1] = '\0';
                         }
-                        fprintf(synopsis, "%s\n", description[i]);
+                        fprintf(synopsis, "%s\n", movies[i].description);
                     } else {
                         printf("Error reading genre description. Please try again.\n");
                         i--; // Repeat this iteration if input fails
@@ -224,7 +234,7 @@ int find_the_first_index_with_zero_upperbox(int OccupiedSeatsUpperBox[]) { // th
     }
 }
 
-int print_movie_seats_lowerBox(){ //prints the movies seats for lowerbox
+int print_movie_seats_lowerBox(int movieIndex){ //prints the movies seats for lowerbox
     int i, j, k;
 	printf("                             ");
     print_with_dash("Cinema Seats Lower Box");
@@ -233,7 +243,7 @@ int print_movie_seats_lowerBox(){ //prints the movies seats for lowerbox
         for (j = 0; j < COLUMNLOWERBOX; j++) { // column loop
             int isOccupied = 0; // Flag to check if seat is occupied
             for (k = 0; k < 151; k++) { // Check if seat is in occupied array
-                if (OccupiedSeatsLowerBox[k] == seatsLowerBox[i][j]) {
+                if (movies[movieIndex].occupiedSeatsLowerBox[k] == seatsLowerBox[i][j]) {
                     isOccupied = 1;
                     break;
                 }
@@ -248,7 +258,7 @@ int print_movie_seats_lowerBox(){ //prints the movies seats for lowerbox
     }
 }
 
-int print_movie_seats_upperBox() {//prints the movies seats for upperbox
+int print_movie_seats_upperBox(int movieIndex) {//prints the movies seats for upperbox
     int i, j, k;
 	printf("                             ");
     print_with_dash("Cinema Seats Upper Box");
@@ -257,7 +267,7 @@ int print_movie_seats_upperBox() {//prints the movies seats for upperbox
         for (j = 0; j < COLUMNSUPPERBOX; j++) { // column loop
             int isOccupied = 0; // Flag to check if seat is occupied
             for (k = 0; k < 113; k++) { // Check if seat is in occupied array
-                if (OccupiedSeatsUpperBox[k] == seatsUpperBox[i][j]) {
+                if (movies[movieIndex].occupiedSeatsUpperBox[k] == seatsUpperBox[i][j]) {
                     isOccupied = 1;
                     break;
                 }
@@ -272,7 +282,7 @@ int print_movie_seats_upperBox() {//prints the movies seats for upperbox
     }
 }
 
-void user_choose_seats_lower(){// where the user inputs his/her chosen seats in the lower box
+void user_choose_seats_lower(int movieIndex){// where the user inputs his/her chosen seats in the lower box
     int i, index, count = 0;
     printf("How many seats are you buying?\n"); // lowerbox
     scanf(" %d", &UserNumberOfSeats);
@@ -292,23 +302,23 @@ void user_choose_seats_lower(){// where the user inputs his/her chosen seats in 
         printf("%d ", UserChosenlowerBoxSeats[i]); // output chosen seats. for checking, pwede tanggalin or hindi sa final code
     }
     
-    index = find_the_first_index_with_zero_lowerbox(OccupiedSeatsLowerBox); // append() function. gina find niya ang index na may 0. or the index next to that last number/seat
+    index = find_the_first_index_with_zero_lowerbox(movies[movieIndex].occupiedSeatsLowerBox); // append() function. gina find niya ang index na may 0. or the index next to that last number/seat
     for (i = index; i < (index + UserNumberOfSeats); i++){
-        OccupiedSeatsLowerBox[i] = UserChosenlowerBoxSeats[count];
+        movies[movieIndex].occupiedSeatsLowerBox[i] = UserChosenlowerBoxSeats[count];
         count++;
     }
 
     printf("Occupied seat/s are: ");
     for(i = 0; i < index + count; i++){
-        printf("%d ", OccupiedSeatsLowerBox[i]); // output occupied seats. for checking, pwede tanggalin or hindi sa final code
+        printf("%d ", movies[movieIndex].occupiedSeatsLowerBox[i]); // output occupied seats. for checking, pwede tanggalin or hindi sa final code
     }
     printf("\n"); 
 
-    index = find_the_first_index_with_zero_lowerbox(OccupiedSeatsLowerBox);
+    index = find_the_first_index_with_zero_lowerbox(movies[movieIndex].occupiedSeatsLowerBox);
     printf("index is %d", index);// output index seats. for checking, tanggalin ito sa final code
 }
 
-void user_choose_seats_upper(){// where the user inputs his/her chosen seats in the upper box
+void user_choose_seats_upper(int movieIndex){// where the user inputs his/her chosen seats in the upper box
     int i, index, count = 0;
     printf("How many seats are you buying?\n"); // uperbox
     scanf(" %d", &UserNumberOfSeats);
@@ -328,43 +338,37 @@ void user_choose_seats_upper(){// where the user inputs his/her chosen seats in 
         printf("%d ", UserChosenUpperBoxSeats[i]); // output chosen seats. for checking, pwede tanggalin or hindi sa final code
     }
     
-    index = find_the_first_index_with_zero_upperbox(OccupiedSeatsUpperBox); // append() function. gina find niya ang index na may 0. or the index next to that last number/seat
+    index = find_the_first_index_with_zero_upperbox(movies[movieIndex].occupiedSeatsUpperBox); // append() function. gina find niya ang index na may 0. or the index next to that last number/seat
     for (i = index; i < (index + UserNumberOfSeats); i++){
-        OccupiedSeatsUpperBox[i] = UserChosenUpperBoxSeats[count];
+        movies[movieIndex].occupiedSeatsUpperBox[i] = UserChosenUpperBoxSeats[count];
         count++;
     }
 
     printf("Occupied seat/s are: ");
     for(i = 0; i < index + count; i++){
-        printf("%d ", OccupiedSeatsUpperBox[i]);  // output occupied seats. for checking, pwede tanggalin or hindi sa final code
+        printf("%d ", movies[movieIndex].occupiedSeatsUpperBox[i]);  // output occupied seats. for checking, pwede tanggalin or hindi sa final code
     }
     printf("\n"); 
 
-    index = find_the_first_index_with_zero_upperbox(OccupiedSeatsUpperBox);
+    index = find_the_first_index_with_zero_upperbox(movies[movieIndex].occupiedSeatsUpperBox);
     printf("index is %d", index); // output index seats. for checking, tanggalin ito sa final code
 }
 
-void readFiles(FILE *file, char stored[][MAX_TITLE_LENGTH], int count){
-    int i = 0;
-    while (i < MAX_MOVIES && fgets(stored[i], MAX_TITLE_LENGTH, file)) {
-        size_t len = strlen(stored[i]);
-        if (len > 0 && stored[i][len - 1] == '\n') {
-            stored[i][len - 1] = '\0';
+void readFiles(FILE *file, char stored[MAX_TITLE_LENGTH], int index) {
+    if (fgets(stored, MAX_TITLE_LENGTH, file)) {
+        size_t len = strlen(stored);
+        if (len > 0 && stored[len - 1] == '\n') {
+            stored[len - 1] = '\0';
         }
-        i++;
     }
-
 }
-void readFilesDescription(FILE *file, char stored[][1000], int count){
-    int i = 0;
-    while (i < MAX_MOVIES && fgets(stored[i], 1000, file)) {
-        size_t len = strlen(stored[i]);
-        if (len > 0 && stored[i][len - 1] == '\n') {
-            stored[i][len - 1] = '\0';
+void readFilesDescription(FILE *file, char stored[1000], int index){
+    if (fgets(stored, 1000, file)) {  // Read only one line per call
+        size_t len = strlen(stored);
+        if (len > 0 && stored[len - 1] == '\n') {
+            stored[len - 1] = '\0';  // Remove the trailing newline
         }
-        i++;
     }
-
 }
 
 int main(){
@@ -372,20 +376,21 @@ int main(){
     FILE *genre = fopen("genres.txt", "r");
     FILE *synopsis = fopen("synopsis.txt", "r");
 
+	int option, i, password = 123, password_try, leave;
+
     if (movie == NULL || genre == NULL || synopsis == NULL) {
         printf("Error opening one or more files.\n");
         return 1;
     }
-
-    readFiles(movie, movies, movie_count);
-    readFiles(genre, genres, movie_count);
-    readFilesDescription(synopsis, description, movie_count);
-
+    for (int i = 0; i < MAX_MOVIES; i++) {
+        readFiles(movie, movies[i].titles, i);
+        readFiles(genre, movies[i].genres, i);
+        readFilesDescription(synopsis, movies[i].description, i);
+    }
 	invalid_option:
 	start:
 	print_GUI();
 	print_menu();
-	int option, i, password = 123, password_try, leave;
 	printf("Option: ");
 	scanf(" %d", &option);
 	
@@ -395,7 +400,7 @@ int main(){
 		scanf(" %d", &password_try);
 		//sleep(1);
 		if(password == password_try){
-	        get_movie_titles(movies, genres, description, movie_count);// if admin 
+	        get_movie_titles(movies, movie_count);// if admin 
 			system("cls");
 			goto start;
 		} else{
@@ -411,7 +416,7 @@ int main(){
         print_GUI();
         printf("The Movies Showing Today Are:\n");
         for (i = 0; i < movie_count; i++) {// print movie list
-            printf("[%d] ---------------------------------- %s ----------------------------------\n\tGenre: %s\n\n\tSynopsis: %s\n\n", i + 1, movies[i], genres[i], description[i]);
+            printf("[%d] ---------------------------------- %s ----------------------------------\n\tGenre: %s\n\n\tSynopsis: %s\n\n", i + 1, movies[i].titles, movies[i].genres, movies[i].description);
         }
 
         while (1) {
@@ -444,140 +449,37 @@ int main(){
     print_GUI();
     printf("The Movies Showing Today Are:\n");
     for (i = 0; i < movie_count; i++) {// print movie list
-        printf("[%d] %s\n", i + 1, movies[i]);
+        printf("[%d] %s\n", i + 1, movies[i].titles);
     }
     printf("\nWhat are you watching today?\nOption: ");
     scanf(" %d", &movie_to_watch);
     
     while (getchar() != '\n');
 
-    switch (movie_to_watch){
-    case 1:
-        print_movie(movies[movie_to_watch-1], genres[movie_to_watch-1], description[movie_to_watch-1]);
-        print_movie_seats_lowerBox();
-        print_movie_seats_upperBox();
-        choose1:
-        printf("\nWhere do you wanna go?\n[Lower Box] or [Upper Box]?\nOption: ");
-        fgets(UserChosenBox, sizeof(UserChosenBox), stdin);
-        UserChosenBox[strcspn(UserChosenBox, "\n")] = 0;
+    
+    print_movie(movies[movie_to_watch-1].titles, movies[movie_to_watch-1].genres, movies[movie_to_watch-1].description);
+    print_movie_seats_lowerBox(movie_to_watch-1);
+    print_movie_seats_upperBox(movie_to_watch-1);
+    choose1:
+    printf("\nWhere do you wanna go?\n[Lower Box] or [Upper Box]?\nOption: ");
+    fgets(UserChosenBox, sizeof(UserChosenBox), stdin);
+    UserChosenBox[strcspn(UserChosenBox, "\n")] = 0;
 
-        for(i = 0; i<strlen(UserChosenBox); i++){
-            UserChosenBox[i] = tolower(UserChosenBox[i]);
-        }
-
-        if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
-            user_choose_seats_lower();
-        }
-        else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
-            user_choose_seats_upper();
-        }
-        else{
-            printf("\nChoose Again");
-            goto choose1;
-        }     
-        goto start;   
-        break;
-    case 2:
-        print_movie(movies[movie_to_watch-1], genres[movie_to_watch-1], description[movie_to_watch-1]);
-        print_movie_seats_lowerBox();
-        print_movie_seats_upperBox();
-        choose2:
-        printf("\nWhere do you wanna go?\n[Lower Box] or [Upper Box]?\nOption: ");
-        fgets(UserChosenBox, sizeof(UserChosenBox), stdin);
-        UserChosenBox[strcspn(UserChosenBox, "\n")] = 0;
-
-        for(i = 0; i<strlen(UserChosenBox); i++){
-            UserChosenBox[i] = tolower(UserChosenBox[i]);
-        }
-
-        if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
-            user_choose_seats_lower();
-        }
-        else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
-            user_choose_seats_upper();
-        }
-        else{
-            printf("\nChoose Again");
-            goto choose2;
-        }     
-        goto start;   
-        break;
-    case 3:
-        print_movie(movies[movie_to_watch-1], genres[movie_to_watch-1], description[movie_to_watch-1]);
-        print_movie_seats_lowerBox();
-        print_movie_seats_upperBox();
-        choose3:
-        printf("\nWhere do you wanna go?\n[Lower Box] or [Upper Box]?\nOption: ");
-        fgets(UserChosenBox, sizeof(UserChosenBox), stdin);
-        UserChosenBox[strcspn(UserChosenBox, "\n")] = 0;
-
-        for(i = 0; i<strlen(UserChosenBox); i++){
-            UserChosenBox[i] = tolower(UserChosenBox[i]);
-        }
-
-        if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
-            user_choose_seats_lower();
-        }
-        else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
-            user_choose_seats_upper();
-        }
-        else{
-            printf("\nChoose Again");
-            goto choose3;
-        }     
-        goto start;   
-        break;
-    case 4:
-        print_movie(movies[movie_to_watch-1], genres[movie_to_watch-1], description[movie_to_watch-1]);
-        print_movie_seats_lowerBox();
-        print_movie_seats_upperBox();
-        choose4:
-        printf("\nWhere do you wanna go?\n[Lower Box] or [Upper Box]?\nOption: ");
-        fgets(UserChosenBox, sizeof(UserChosenBox), stdin);
-        UserChosenBox[strcspn(UserChosenBox, "\n")] = 0;
-
-        for(i = 0; i<strlen(UserChosenBox); i++){
-            UserChosenBox[i] = tolower(UserChosenBox[i]);
-        }
-
-        if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
-            user_choose_seats_lower();
-        }
-        else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
-            user_choose_seats_upper();
-        }
-        else{
-            printf("\nChoose Again");
-            goto choose4;
-        }     
-        goto start;   
-        break;
-    case 5:
-        print_movie(movies[movie_to_watch-1], genres[movie_to_watch-1], description[movie_to_watch-1]);
-        print_movie_seats_lowerBox();
-        print_movie_seats_upperBox();
-        choose5:
-        printf("\nWhere do you wanna go?\n[Lower Box] or [Upper Box]?\nOption: ");
-        fgets(UserChosenBox, sizeof(UserChosenBox), stdin);
-        UserChosenBox[strcspn(UserChosenBox, "\n")] = 0;
-
-        for(i = 0; i<strlen(UserChosenBox); i++){
-            UserChosenBox[i] = tolower(UserChosenBox[i]);
-        }
-
-        if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
-            user_choose_seats_lower();
-        }
-        else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
-            user_choose_seats_upper();
-        }
-        else{
-            printf("\nChoose Again");
-            goto choose5;
-        }     
-        goto start;   
-        break;        
+    for(i = 0; i<strlen(UserChosenBox); i++){
+        UserChosenBox[i] = tolower(UserChosenBox[i]);
     }
+
+    if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
+        user_choose_seats_lower(movie_to_watch-1);
+    }
+    else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
+        user_choose_seats_upper(movie_to_watch-1);
+    }
+    else{
+        printf("\nChoose Again");
+        goto choose1;
+    }    
+   
 
 	goto start;
     
