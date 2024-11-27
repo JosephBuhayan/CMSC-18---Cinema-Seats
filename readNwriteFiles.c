@@ -53,7 +53,7 @@ int seatsUpperBox[ROWSUPPERBOX][COLUMNSUPPERBOX] = {// the seats for upperbox
 };
 int movie_count = MAX_MOVIES; // movie count
 int movie_to_watch;// the user inputted choice of movie is saved here
-int UserNumberOfSeats, UserChosenUpperBoxSeats[200], UserChosenlowerBoxSeats[200]; // user number of seats is how many seats the user wanna buy/chose. The others is the array of all occupied seats
+int UserNumberOfSeats, UserChosenUpperBoxSeats[MAX_SEATS], UserChosenlowerBoxSeats[MAX_SEATS]; // user number of seats is how many seats the user wanna buy/chose. The others is the array of all occupied seats
 char UserChosenBox[20]; // Upperbox or Lower box
 
 void get_movie_titles(Movie movies[], int count) {
@@ -175,6 +175,7 @@ void print_menu (){
 	printf("\t[1] Enter as ADMIN\n");
 	printf("\t[2] Enter as CUSTOMER\n");
 	printf("\t[3] View Available Movies\n");
+	printf("\t[4] Exit program\n");
 }
 
 void print_with_dash(const char *str) {//just prints the entered string with dashes ex. --hello--
@@ -387,101 +388,102 @@ int main(){
         readFiles(genre, movies[i].genres, i);
         readFilesDescription(synopsis, movies[i].description, i);
     }
-	invalid_option:
-	start:
-	print_GUI();
-	print_menu();
-	printf("Option: ");
-	scanf(" %d", &option);
-	
-	//MENU LOGIC
-	if(option == 1){
-		printf("Admin Password: "); //Password is 123;
-		scanf(" %d", &password_try);
-		//sleep(1);
-		if(password == password_try){
-	        get_movie_titles(movies, movie_count);// if admin 
-			system("cls");
-			goto start;
-		} else{
-			puts("Wrong Password");
-			//sleep(2);
-			system("cls");
-			goto invalid_option;
-		}
-	} else if (option == 2){
-		goto buy_tickets;
-	} else if (option ==3){
-        system("cls");
+
+
+    do{
         print_GUI();
-        printf("The Movies Showing Today Are:\n");
-        for (i = 0; i < movie_count; i++) {// print movie list
-            printf("[%d] ---------------------------------- %s ----------------------------------\n\tGenre: %s\n\n\tSynopsis: %s\n\n", i + 1, movies[i].titles, movies[i].genres, movies[i].description);
-        }
+        print_menu();
+        printf("Option: ");
+        scanf(" %d", &option);
+        
+        switch(option){
 
-        while (1) {
-            printf("===================================================================================");
-            printf("\n\n[1] Leave \nOptions: ");
-            scanf("%d", &leave);
+            //MENU LOGIC
+            case 1:
+                printf("Admin Password: "); //Password is 123;
+                scanf(" %d", &password_try);
+                //sleep(1);
+                if(password == password_try){
+                    get_movie_titles(movies, movie_count);// if admin 
+                    system("cls");
+                } else{
+                    puts("Wrong Password");
+                    //sleep(2);
+                    system("cls");
+                }
+                break;
+            case 2:
+                system("cls");	
+                print_GUI();
+                printf("The Movies Showing Today Are:\n");
+                for (i = 0; i < movie_count; i++) {// print movie list
+                    printf("[%d] %s\n", i + 1, movies[i].titles);
+                }
 
-            if (leave == 1) {
-                printf("You entered 1. Exiting the loop.\n");
-                break; // Exit the loop when input is 1
-            } else {
-                printf("You entered %d. Try again.\n", leave);
+                printf("\nWhat are you watching today?\nOption: ");
+                scanf(" %d", &movie_to_watch);
+                
+                while (getchar() != '\n');
+
+                
+                print_movie(movies[movie_to_watch-1].titles, movies[movie_to_watch-1].genres, movies[movie_to_watch-1].description);
+                print_movie_seats_lowerBox(movie_to_watch-1);
+                print_movie_seats_upperBox(movie_to_watch-1);
+
+                choose1:
+
+                printf("\nWhere do you wanna go?\n[Lower Box] or [Upper Box]?\nOption: ");
+                fgets(UserChosenBox, sizeof(UserChosenBox), stdin);
+                UserChosenBox[strcspn(UserChosenBox, "\n")] = 0;
+
+                for(i = 0; i<strlen(UserChosenBox); i++){
+                    UserChosenBox[i] = tolower(UserChosenBox[i]);
+                }
+
+                if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
+                    user_choose_seats_lower(movie_to_watch-1);
+                }
+                else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
+                    user_choose_seats_upper(movie_to_watch-1);
+                }
+                else{
+                    printf("\nChoose Again");
+                    goto choose1;
+                }
+                break;
+            case 3:
+                system("cls");
+                print_GUI();
+                printf("The Movies Showing Today Are:\n");
+                for (i = 0; i < movie_count; i++) {// print movie list
+                    printf("[%d] ---------------------------------- %s ----------------------------------\n\tGenre: %s\n\n\tSynopsis: %s\n\n", i + 1, movies[i].titles, movies[i].genres, movies[i].description);
+                }
+
+                while (1) {
+                    printf("===================================================================================");
+                    printf("\n\n[1] Leave \nOptions: ");
+                    scanf("%d", &leave);
+
+                    if (leave == 1) {
+                        printf("You entered 1. Exiting the loop.\n");
+                        break; // Exit the loop when input is 1
+                    } else {
+                        printf("You entered %d. Try again.\n", leave);
+                    }
+                }
+                system("cls");
+                break;
+            case 4:
+                printf("Exiting program...\n");
+                return 0;
+                break;
+            default:
+                puts("Invalid Input!");
+                sleep(2);
+                system("cls");
+                break;
             }
-        }
-        system("cls");
-        goto start;
-
-	} else {
-		puts("Invalid Input!");
-		sleep(2);
-		system("cls");
-		
-		goto invalid_option;
-	}
-	
-	
-    buy_tickets:
-    
-    system("cls");	
-    print_GUI();
-    printf("The Movies Showing Today Are:\n");
-    for (i = 0; i < movie_count; i++) {// print movie list
-        printf("[%d] %s\n", i + 1, movies[i].titles);
-    }
-    printf("\nWhat are you watching today?\nOption: ");
-    scanf(" %d", &movie_to_watch);
-    
-    while (getchar() != '\n');
-
-    
-    print_movie(movies[movie_to_watch-1].titles, movies[movie_to_watch-1].genres, movies[movie_to_watch-1].description);
-    print_movie_seats_lowerBox(movie_to_watch-1);
-    print_movie_seats_upperBox(movie_to_watch-1);
-    choose1:
-    printf("\nWhere do you wanna go?\n[Lower Box] or [Upper Box]?\nOption: ");
-    fgets(UserChosenBox, sizeof(UserChosenBox), stdin);
-    UserChosenBox[strcspn(UserChosenBox, "\n")] = 0;
-
-    for(i = 0; i<strlen(UserChosenBox); i++){
-        UserChosenBox[i] = tolower(UserChosenBox[i]);
-    }
-
-    if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
-        user_choose_seats_lower(movie_to_watch-1);
-    }
-    else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
-        user_choose_seats_upper(movie_to_watch-1);
-    }
-    else{
-        printf("\nChoose Again");
-        goto choose1;
-    }    
-   
-
-	goto start;
+    }while(1);
     
     fclose(movie);
     fclose(genre);
