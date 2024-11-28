@@ -68,7 +68,7 @@ void get_movie_titles(Movie movies[], int count) {
     do{
         do{
             printf("MENU OPTIONS AS AN ADMIN:\n");
-            printf("\t[1]Enter movie titles\n\t[2]Enter movie genres\n\t[3]Enter movie description\n\t[4]Enter ticket price\n\t[5]Exit admin mode\nOption: ");
+            printf("\t[1]Edit movie titles\n\t[2]Edit movie genres\n\t[3]Edit movie description\n\t[4]Edit ticket price\n\t[5]Exit admin mode\nOption: ");
             scanf(" %d", &choice);
 
             while (getchar() != '\n');
@@ -322,6 +322,7 @@ void user_choose_seats_lower(int movieIndex){// where the user inputs his/her ch
             }
         }while(loop);
     }
+    system("cls");
     printf("Your total is P %d!\n", movies[movieIndex].price * UserNumberOfSeats);
 
     printf("You chose seat/s: ");
@@ -343,6 +344,11 @@ void user_choose_seats_lower(int movieIndex){// where the user inputs his/her ch
 
     index = find_the_first_index_with_zero_lowerbox(movies[movieIndex].occupiedSeatsLowerBox);
     printf("index is %d", index);// output index seats. for checking, tanggalin ito sa final code
+
+    printf("\nPress Enter to continue...");
+    getchar();
+    getchar();
+    system("cls");
 }
 
 void user_choose_seats_upper(int movieIndex){// where the user inputs his/her chosen seats in the upper box
@@ -361,7 +367,8 @@ void user_choose_seats_upper(int movieIndex){// where the user inputs his/her ch
             }
         }while(loop);
     }
-
+    
+    system("cls");
     printf("Your total is P %d!\n", movies[movieIndex].price * UserNumberOfSeats);
     
     printf("You chose seat/s: ");
@@ -383,6 +390,11 @@ void user_choose_seats_upper(int movieIndex){// where the user inputs his/her ch
 
     index = find_the_first_index_with_zero_upperbox(movies[movieIndex].occupiedSeatsUpperBox);
     printf("index is %d", index); // output index seats. for checking, tanggalin ito sa final code
+
+    printf("\nPress Enter to continue...");
+    getchar();
+    getchar();
+    system("cls");
 }
 
 void readFiles(FILE *file, char stored[MAX_TITLE_LENGTH], int index) {
@@ -434,12 +446,17 @@ int main(){
         printf("Option: ");
         scanf(" %d", &option);
         
+        while (getchar() != '\n');
+
         switch(option){
 
             //MENU LOGIC
             case 1:
                 printf("Admin Password: "); //Password is 123;
                 scanf(" %d", &password_try);
+
+                while (getchar() != '\n');
+                
                 //sleep(1);
                 if(password == password_try){
                     get_movie_titles(movies, movie_count);// if admin 
@@ -451,18 +468,31 @@ int main(){
                 }
                 break;
             case 2:
-                loop = 1;
-                system("cls");	
-                print_GUI();
-                printf("The Movies Showing Today Are:\n");
-                for (i = 0; i < movie_count; i++) {// print movie list
-                    printf("[%d] %s\n", i + 1, movies[i].titles);
-                }
+                do{
+                    system("cls");	
+                    print_GUI();
+                    printf("The Movies Showing Today Are:\n");
+                    for (i = 0; i < movie_count; i++) {// print movie list
+                        printf("[%d] %s\n", i + 1, movies[i].titles);
+                    }
+                    printf("\n[%d] Go back", i + 1);
 
-                printf("\nWhat are you watching today?\nOption: ");
-                scanf(" %d", &movie_to_watch);
-                
-                while (getchar() != '\n');
+                    printf("\nWhat are you watching today?\nOption: ");
+                    scanf(" %d", &movie_to_watch);
+                    while (getchar() != '\n');
+
+                    if(!(movie_to_watch<=MAX_MOVIES+1 && movie_to_watch>0)){
+                        printf("\nInvalid input! Try again");
+                        sleep(1);
+                    }else{
+                        break;
+                    }
+                }while(1);
+
+                if(movie_to_watch == MAX_MOVIES + 1){//when user choose option go back
+                    system("cls");
+                    continue;
+                }
 
                 
                 print_movie(movies[movie_to_watch-1].titles, movies[movie_to_watch-1].genres, movies[movie_to_watch-1].price, movies[movie_to_watch-1].description);
@@ -480,16 +510,16 @@ int main(){
 
                     if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
                         user_choose_seats_lower(movie_to_watch-1);
-                        loop = 0;
+                        break;
                     }
                     else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
                         user_choose_seats_upper(movie_to_watch-1);
-                        loop = 0;
+                        break;
                     }
                     else{
                         printf("\nChoose Again");
                     }
-                }while(loop);
+                }while(1);
 
                 break;
             case 3:
