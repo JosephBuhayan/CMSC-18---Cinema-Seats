@@ -3,8 +3,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
-#include <time.h>
-#include <conio.h>
 
 #define MAX_MOVIES 5
 #define MAX_TITLE_LENGTH 100
@@ -23,8 +21,6 @@ typedef struct{
     int occupiedSeatsLowerBox[MAX_SEATS];
     int occupiedSeatsUpperBox[MAX_SEATS];
     int price;
-    int startHour;
-    int startMinute;
 
 }Movie;
 
@@ -67,21 +63,21 @@ void get_movie_titles(Movie movies[], int count) {
     int keep_running = 1;
     int price_input;
 
-    FILE *movie, *genre, *synopsis, *price, *schedule;
+    FILE *movie, *genre, *synopsis, *price;
 
     do{
         do{
             printf("MENU OPTIONS AS AN ADMIN:\n");
-            printf("\t[1]Edit movie titles\n\t[2]Edit movie genres\n\t[3]Edit movie description\n\t[4]Edit ticket price\n\t[5]Edit movie schedule\n\t[6]Exit admin mode\nOption: ");
+            printf("\t[1]Enter movie titles\n\t[2]Enter movie genres\n\t[3]Enter movie description\n\t[4]Enter ticket price\n\t[5]Exit admin mode\nOption: ");
             scanf(" %d", &choice);
 
             while (getchar() != '\n');
 
-            if(!(choice>0 && choice <7)){
+            if(!(choice>0 && choice <6)){
                 printf("Invalid input! Please try again...\n");
             }
 
-        }while(!(choice>0 && choice <7));
+        }while(!(choice>0 && choice <6));
 
         switch(choice){
             case 1:
@@ -179,26 +175,6 @@ void get_movie_titles(Movie movies[], int count) {
                 fclose(price);   
                 break;
             case 5:
-                schedule = fopen("schedule.txt", "w"); 
-                if (schedule == NULL) {
-                    perror("Error opening file");
-                    break;
-                }
-                for(i = 0; i < count; i++){
-                    printf("Enter schedule(hour minute, 24-hour format) for movie [%d] %s: ", i + 1, movies[i].titles);
-
-                    if (scanf("%d %d", &movies[i].startHour, &movies[i].startMinute) == 2) {
-                        
-                        fprintf(schedule, "%d:%d\n", movies[i].startHour, movies[i].startMinute);
-                    } else {
-                        printf("Error reading movie schedule. Please try again.\n");
-                        i--; // Repeat this iteration if input fails
-                        while (getchar() != '\n');
-                    }
-                }
-                fclose(schedule);
-                break;
-            case 6:
                 printf("Exiting admin mode...");
                 // Sleep(1000);
                 keep_running = 0;
@@ -255,15 +231,13 @@ void print_with_dash(const char *str) {//just prints the entered string with das
     printf("\n");
 }
 
-void print_movie(char movies[], char genres[], int price, int hour, int minute, char description[]){ //prints the header kumbaga
+void print_movie(char movies[], char genres[], int price, char description[]){ //prints the header kumbaga
     printf("----------------------------------------\n");
     printf("Movie Title: %s\n", movies);
-    printf("Genre: %s\n", genres);
-    printf("Price: P %d\n", price);
-    printf("Movie shows on [%02d:%02d]\n\n", hour, minute);
+    printf("Genre: %s\n\n", genres);
+    printf("Price: P %d\n\n", price);
     printf("Synopsis: %s\n\n", description);
-
-
+    printf("Rating: G\n");
 }
 
 int find_the_first_index_with_zero_lowerbox(int OccupiedSeatsLowerBox[]) { // this basically functions as the append() function, mag start og add numbers sa first index na may 0 or sa last item. safe ni kay wala may 0 na seat number 
@@ -332,67 +306,6 @@ int print_movie_seats_upperBox(int movieIndex) {//prints the movies seats for up
     }
 }
 
-void timer(int scheduledTime){
-    int seconds = scheduledTime;
-    int h, m, s;
-    
-    while(seconds>0){
-        h = seconds/3600;
-        m = (seconds%3600)/60;
-        s = seconds % 60;
-        char key;
-
-        system("cls");
-        printf("Movie starts in about...\n");
-        printf("==========================\n");
-        printf("        %02d:%02d:%02d", h, m, s);
-        printf("\n==========================");
-        printf("\n[Press Enter to leave]");
-    
-
-        fflush(stdout);
-
-        clock_t stop = clock() + CLOCKS_PER_SEC;
-        while(clock()<stop){
-            if (kbhit()) {
-                key = getch(); 
-                if (key == '\r') { 
-                    printf("\nExiting the countdown...\n");
-                    return;
-                }
-            }
-
-        }
-
-        seconds--;
-        
-
-    }
-
-    system("cls");
-    printf("The movie is starting right now~!\n");
-    printf("=====================================================");
-    printf("\nPress Enter to leave");
-    getchar();
-    
-}
-
-void startScheduledMovies(int i) {
-    time_t t = time(NULL);
-    struct tm currentTime = *localtime(&t);
-    
-    t = time(NULL);
-    currentTime = *localtime(&t);
-    
-    // Calculate the time difference between the current time and the movie start time
-        int movieStartInSeconds = movies[i].startHour * 3600 + movies[i].startMinute * 60;
-        int currentTimeInSeconds = currentTime.tm_hour * 3600 + currentTime.tm_min * 60 + currentTime.tm_sec;
-        int timeDifference = movieStartInSeconds - currentTimeInSeconds;
-        
-        timer(timeDifference);
-        
-}
-
 void user_choose_seats_lower(int movieIndex){// where the user inputs his/her chosen seats in the lower box
     int i, index, count = 0, loop;
     printf("How many seats are you buying?\n"); // lowerbox
@@ -409,8 +322,6 @@ void user_choose_seats_lower(int movieIndex){// where the user inputs his/her ch
             }
         }while(loop);
     }
-    system("cls");
-    printf("Your total is P %d!\n", movies[movieIndex].price * UserNumberOfSeats);
 
     printf("You chose seat/s: ");
     for(i = 0; i < UserNumberOfSeats; i++){
@@ -431,16 +342,6 @@ void user_choose_seats_lower(int movieIndex){// where the user inputs his/her ch
 
     index = find_the_first_index_with_zero_lowerbox(movies[movieIndex].occupiedSeatsLowerBox);
     printf("index is %d", index);// output index seats. for checking, tanggalin ito sa final code
-
-    printf("\nPress Enter to continue...");
-    getchar();
-    getchar();
-    system("cls");
-
-    startScheduledMovies(movieIndex);
-
-
-    system("cls");
 }
 
 void user_choose_seats_upper(int movieIndex){// where the user inputs his/her chosen seats in the upper box
@@ -460,9 +361,6 @@ void user_choose_seats_upper(int movieIndex){// where the user inputs his/her ch
         }while(loop);
     }
 
-    system("cls");
-    printf("Your total is P %d!\n", movies[movieIndex].price * UserNumberOfSeats);
-    
     printf("You chose seat/s: ");
     for(i = 0; i < UserNumberOfSeats; i++){
         printf("%d ", UserChosenUpperBoxSeats[i]); // output chosen seats. for checking, pwede tanggalin or hindi sa final code
@@ -482,19 +380,8 @@ void user_choose_seats_upper(int movieIndex){// where the user inputs his/her ch
 
     index = find_the_first_index_with_zero_upperbox(movies[movieIndex].occupiedSeatsUpperBox);
     printf("index is %d", index); // output index seats. for checking, tanggalin ito sa final code
-
-    printf("\nPress Enter to continue...");
-    getchar();
-    getchar();
-    system("cls");
-
-    startScheduledMovies(movieIndex);
-
-
-    system("cls");
-    
 }
-//--------------------------------- reading files -----------------------------------------------------------
+
 void readFiles(FILE *file, char stored[MAX_TITLE_LENGTH], int index) {
     if (fgets(stored, MAX_TITLE_LENGTH, file)) {
         size_t len = strlen(stored);
@@ -516,26 +403,12 @@ void readFilesPrice(FILE *file, int *stored, int index){
         fscanf(file, "%d", stored);
     }
 }
-void readFilesSched(FILE *file, int *stored,int *anotherStored, int index){
-    char currentLine[100];
-    
-    if (fgets(currentLine, sizeof(currentLine), file)) {
-        // Use sscanf to parse the hour and minute from the line
-        if (sscanf(currentLine, "%d:%d", stored, anotherStored) != 2) {
-            printf("Error: Failed to parse the schedule from line: %s\n", currentLine);
-        }
-    }
-}
-
-
-
 
 int main(){
     FILE *movie = fopen("movieTitles.txt", "r");
     FILE *genre = fopen("genres.txt", "r");
     FILE *synopsis = fopen("synopsis.txt", "r");
     FILE *price = fopen("price.txt", "r");
-    FILE *schedule = fopen("schedule.txt", "r");
 
 	int option, i, password = 123, password_try, leave, loop;
 
@@ -549,7 +422,6 @@ int main(){
         readFiles(genre, movies[i].genres, i);
         readFilesDescription(synopsis, movies[i].description, i);
         readFilesPrice(price, &movies[i].price, i);
-        readFilesSched(schedule, &movies[i].startHour, &movies[i].startMinute, i);
     }
 
 
@@ -559,17 +431,12 @@ int main(){
         printf("Option: ");
         scanf(" %d", &option);
         
-        while (getchar() != '\n');
-
         switch(option){
 
             //MENU LOGIC
             case 1:
                 printf("Admin Password: "); //Password is 123;
                 scanf(" %d", &password_try);
-
-                while (getchar() != '\n');
-                
                 //sleep(1);
                 if(password == password_try){
                     get_movie_titles(movies, movie_count);// if admin 
@@ -581,34 +448,21 @@ int main(){
                 }
                 break;
             case 2:
-                do{
-                    system("cls");	
-                    print_GUI();
-                    printf("The Movies Showing Today Are:\n");
-                    for (i = 0; i < movie_count; i++) {// print movie list
-                        printf("[%d] %s\n", i + 1, movies[i].titles);
-                    }
-                    printf("\n[%d] Go back", i + 1);
-
-                    printf("\nWhat are you watching today?\nOption: ");
-                    scanf(" %d", &movie_to_watch);
-                    while (getchar() != '\n');
-
-                    if(!(movie_to_watch<=MAX_MOVIES+1 && movie_to_watch>0)){
-                        printf("\nInvalid input! Try again");
-                        sleep(1);
-                    }else{
-                        break;
-                    }
-                }while(1);
-
-                if(movie_to_watch == MAX_MOVIES + 1){//when user choose option go back
-                    system("cls");
-                    continue;
+                loop = 1;
+                system("cls");	
+                print_GUI();
+                printf("The Movies Showing Today Are:\n");
+                for (i = 0; i < movie_count; i++) {// print movie list
+                    printf("[%d] %s\n", i + 1, movies[i].titles);
                 }
 
+                printf("\nWhat are you watching today?\nOption: ");
+                scanf(" %d", &movie_to_watch);
                 
-                print_movie(movies[movie_to_watch-1].titles, movies[movie_to_watch-1].genres, movies[movie_to_watch-1].price, movies[movie_to_watch-1].startHour, movies[movie_to_watch-1].startMinute, movies[movie_to_watch-1].description);
+                while (getchar() != '\n');
+
+                
+                print_movie(movies[movie_to_watch-1].titles, movies[movie_to_watch-1].genres, movies[movie_to_watch-1].price, movies[movie_to_watch-1].description);
                 print_movie_seats_lowerBox(movie_to_watch-1);
                 print_movie_seats_upperBox(movie_to_watch-1);
 
@@ -623,16 +477,16 @@ int main(){
 
                     if (strcmp(UserChosenBox, "lower") == 0 || strcmp(UserChosenBox, "lower box" ) == 0) {
                         user_choose_seats_lower(movie_to_watch-1);
-                        break;
+                        loop = 0;
                     }
                     else if(strcmp(UserChosenBox, "upper") == 0 || strcmp(UserChosenBox, "upper box") == 0){
                         user_choose_seats_upper(movie_to_watch-1);
-                        break;
+                        loop = 0;
                     }
                     else{
                         printf("\nChoose Again");
                     }
-                }while(1);
+                }while(loop);
 
                 break;
             case 3:
@@ -640,7 +494,7 @@ int main(){
                 print_GUI();
                 printf("The Movies Showing Today Are:\n");
                 for (i = 0; i < movie_count; i++) {// print movie list
-                    printf("[%d] ---------------------------------- %s ----------------------------------\n\tGenre: %s\n\tPrice: P %d\n\tMovie shows on [%02d:%02d]\n\n\tSynopsis: %s\n\n", i + 1, movies[i].titles, movies[i].genres,movies[i].price, movies[i].startHour, movies[i].startMinute, movies[i].description);
+                    printf("[%d] ---------------------------------- %s ----------------------------------\n\tGenre: %s\n\tPrice: P %d\n\n\tSynopsis: %s\n\n", i + 1, movies[i].titles, movies[i].genres,movies[i].price, movies[i].description);
                 }
 
                 while (1) {
@@ -673,7 +527,6 @@ int main(){
     fclose(genre);
     fclose(synopsis);
     fclose(price);
-    fclose(schedule);
 
     return 0;
 }
