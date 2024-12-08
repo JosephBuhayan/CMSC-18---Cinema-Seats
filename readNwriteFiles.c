@@ -194,7 +194,6 @@ int main(){
                         printf("\nChoose Again");
                     }
                 }while(1);
-
                 break;
             case 3:
                 system("cls");
@@ -640,10 +639,10 @@ void startScheduledMovies(int i) {
 }
 //----------------------------------------- algorithm for seats ---------------------------------
 void user_choose_seats_lower(int movieIndex){// where the user inputs his/her chosen seats in the lower box
-    int i, index, count = 0, loop, profit;
-
+    int i, index, count = 0, loop, profit, seatAvailable = 0;
     printf("How many seats are you buying?\n"); // lowerbox
     scanf(" %d", &UserNumberOfSeats);
+
     for (i = 0; i < UserNumberOfSeats; i++){// loops through and gets all the seats the costumer want
         do{
             loop = 0;
@@ -653,21 +652,29 @@ void user_choose_seats_lower(int movieIndex){// where the user inputs his/her ch
                 printf("There is no seat %d\n", UserChosenlowerBoxSeats[i]);
                 printf("Enter a new seat"); 
                 loop = 1;
+            } else {
+                for (int j = 0; j < 151; j++) {
+                    if (movies[movieIndex].occupiedSeatsLowerBox[j] == UserChosenlowerBoxSeats[i]) {
+                        printf("Seat %d is already taken. Please choose another seat.\n", UserChosenlowerBoxSeats[i]);
+                        loop = 1;
+                        break;
+                    }
+                }
             }
         }while(loop);
     }
+
     system("cls");
     printf("Your total is P %d!\n", movies[movieIndex].price * UserNumberOfSeats);
     profit = movies[movieIndex].price * UserNumberOfSeats;
     movies[movieIndex].profit += profit;
     movies[movieIndex].ticketSold += UserNumberOfSeats;
 
-
     printf("You chose seat/s: ");
     for(i = 0; i < UserNumberOfSeats; i++){
         printf("%d ", UserChosenlowerBoxSeats[i]); // output chosen seats. for checking, pwede tanggalin or hindi sa final code
     }
-    
+
     index = find_the_first_index_with_zero_lowerbox(movies[movieIndex].occupiedSeatsLowerBox); // append() function. gina find niya ang index na may 0. or the index next to that last number/seat
     for (i = index; i < (index + UserNumberOfSeats); i++){
         movies[movieIndex].occupiedSeatsLowerBox[i] = UserChosenlowerBoxSeats[count];
@@ -690,14 +697,13 @@ void user_choose_seats_lower(int movieIndex){// where the user inputs his/her ch
 
     startScheduledMovies(movieIndex);
 
-
     system("cls");
 }
 void user_choose_seats_upper(int movieIndex){// where the user inputs his/her chosen seats in the upper box
-    int i, index, count = 0, loop, profit;
-
-    printf("How many seats are you buying?\n"); // uperbox
+    int i, index, count = 0, loop, profit, seatAvailable = 0;
+    printf("How many seats are you buying?\n"); // upperbox
     scanf(" %d", &UserNumberOfSeats);
+
     for (i = 0; i < UserNumberOfSeats; i++){// loops through and gets all the seats the costumer want
         do{
             loop = 0;
@@ -705,8 +711,16 @@ void user_choose_seats_upper(int movieIndex){// where the user inputs his/her ch
             scanf(" %d", &UserChosenUpperBoxSeats[i]); 
             if (UserChosenUpperBoxSeats[i] <= 0 || UserChosenUpperBoxSeats[i] >= 112){// checks if the seat input is within range
                 printf("There is no seat %d\n", UserChosenUpperBoxSeats[i]);
-                printf("Enter a new seat");
+                printf("Enter a new seat"); 
                 loop = 1;
+            } else {
+                for (int j = 0; j < 112; j++) {
+                    if (movies[movieIndex].occupiedSeatsUpperBox[j] == UserChosenUpperBoxSeats[i]) {
+                        printf("Seat %d is already taken. Please choose another seat.\n", UserChosenUpperBoxSeats[i]);
+                        loop = 1;
+                        break;
+                    }
+                }
             }
         }while(loop);
     }
@@ -717,12 +731,11 @@ void user_choose_seats_upper(int movieIndex){// where the user inputs his/her ch
     movies[movieIndex].profit += profit;
     movies[movieIndex].ticketSold += UserNumberOfSeats;
 
-
     printf("You chose seat/s: ");
     for(i = 0; i < UserNumberOfSeats; i++){
         printf("%d ", UserChosenUpperBoxSeats[i]); // output chosen seats. for checking, pwede tanggalin or hindi sa final code
     }
-    
+
     index = find_the_first_index_with_zero_upperbox(movies[movieIndex].occupiedSeatsUpperBox); // append() function. gina find niya ang index na may 0. or the index next to that last number/seat
     for (i = index; i < (index + UserNumberOfSeats); i++){
         movies[movieIndex].occupiedSeatsUpperBox[i] = UserChosenUpperBoxSeats[count];
@@ -731,12 +744,12 @@ void user_choose_seats_upper(int movieIndex){// where the user inputs his/her ch
 
     printf("Occupied seat/s are: ");
     for(i = 0; i < index + count; i++){
-        printf("%d ", movies[movieIndex].occupiedSeatsUpperBox[i]);  // output occupied seats. for checking, pwede tanggalin or hindi sa final code
+        printf("%d ", movies[movieIndex].occupiedSeatsUpperBox[i]); // output occupied seats. for checking, pwede tanggalin or hindi sa final code
     }
     printf("\n"); 
 
     index = find_the_first_index_with_zero_upperbox(movies[movieIndex].occupiedSeatsUpperBox);
-    printf("index is %d", index); // output index seats. for checking, tanggalin ito sa final code
+    printf("index is %d", index);// output index seats. for checking, tanggalin ito sa final code
 
     printf("\nPress Enter to continue...");
     getchar();
@@ -745,9 +758,7 @@ void user_choose_seats_upper(int movieIndex){// where the user inputs his/her ch
 
     startScheduledMovies(movieIndex);
 
-
     system("cls");
-    
 }
 int find_the_first_index_with_zero_lowerbox(int OccupiedSeatsLowerBox[]) { // this basically functions as the append() function, mag start og add numbers sa first index na may 0 or sa last item. safe ni kay wala may 0 na seat number 
     int i;
