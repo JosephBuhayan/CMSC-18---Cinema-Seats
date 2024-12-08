@@ -33,6 +33,7 @@ typedef struct{
 
 Movie movies[MAX_MOVIES];
 
+void admin_mode();
 void fund_management( int count);
 void movie_management(Movie movies[], int count) ;
 void print_GUI ();
@@ -81,7 +82,6 @@ int seatsUpperBox[ROWSUPPERBOX][COLUMNSUPPERBOX] = {// the seats for upperbox
         {99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112}
 };
 int movie_count = MAX_MOVIES; // movie count
-int movie_to_watch;// the user inputted choice of movie is saved here
 int UserNumberOfSeats, UserChosenUpperBoxSeats[MAX_SEATS], UserChosenlowerBoxSeats[MAX_SEATS]; // user number of seats is how many seats the user wanna buy/chose. The others is the array of all occupied seats
 char UserChosenBox[20]; // Upperbox or Lower box
 
@@ -92,11 +92,12 @@ int main(){
     FILE *synopsis = fopen("synopsis.txt", "r");
     FILE *price = fopen("price.txt", "r");
     FILE *schedule = fopen("schedule.txt", "r");
-    FILE *funds;
+    
+    int movie_to_watch;// the user inputted choice of movie is saved here
 
-	int option, i, password = 123, password_try, leave, loop, choice, run = 1;
+	int option, i, password = 123, password_try, leave, loop;
 
-    if (movie == NULL || genre == NULL || synopsis == NULL || price == NULL || schedule == NULL || funds == NULL) {
+    if (movie == NULL || genre == NULL || synopsis == NULL || price == NULL || schedule == NULL) {
         printf("Error opening one or more files.\n");
         return 1;
     }
@@ -122,9 +123,7 @@ int main(){
 
             //MENU LOGIC
             case 1:
-                funds = fopen("funds.txt", "r");
-                for (int i = 0; i < MAX_MOVIES; i++) readFiles2Int(funds, &movies[i].ticketSold, &movies[i].profit, i);
-                fclose(funds);
+
 
                 printf("Admin Password: "); //Password is 123;
                 scanf(" %d", &password_try);
@@ -133,27 +132,7 @@ int main(){
                 
                 //sleep(1);
                 if(password == password_try){
-                    do{
-                        system("cls");
-                        printf("MENU OPTIONS AS AN ADMIN:\n");
-                        printf("\t[1]Manage Movies\n\t[2]Manage Funds\n\t[3]Exit admin mode\nOption: ");
-                        scanf(" %d", &choice);
-                        system("cls");
-
-                        while (getchar() != '\n');
-
-                        switch(choice){
-                            case 1:
-                                movie_management(movies, movie_count);// if admin 
-                                break;
-                            case 2:
-                                fund_management(movie_count);
-                                break;
-                            case 3:
-                                printf("Exiting admin mode...");
-                                run = 0;
-                        }
-                    }while(run);
+                    admin_mode();
                 } else{
                     puts("Wrong Password");
                     //sleep(2);
@@ -222,7 +201,7 @@ int main(){
                 print_GUI();
                 printf("The Movies Showing Today Are:\n");
                 for (i = 0; i < movie_count; i++) {// print movie list
-                    printf("[%d] ---------------------------------- %s ----------------------------------\n\tGenre: %s\n\tPrice: P %d\n\tMovie shows on [%02d:%02d]\n\n\tSynopsis: %s\n\n", i + 1, movies[i].titles, movies[i].genres,movies[i].price, movies[i].startHour, movies[i].startMinute, movies[i].description);
+                    printf("[%d] ---------------------------------- %-40s ----------------------------------\n\tGenre: %s\n\tPrice: P %d\n\tMovie shows on [%02d:%02d]\n\n\tSynopsis: %s\n\n", i + 1, movies[i].titles, movies[i].genres,movies[i].price, movies[i].startHour, movies[i].startMinute, movies[i].description);
                 }
 
                 while (1) {
@@ -260,12 +239,45 @@ int main(){
     return 0;
 }
 //----------------------------------------- ADMIN OPTONS ----------------------------------------------
+void admin_mode(){
+    int choice;
+    do{
+            system("cls");
+            printf("MENU OPTIONS AS AN ADMIN:\n");
+            printf("\t[1]Manage Movies\n\t[2]Manage Funds\n\t[3]Exit admin mode\nOption: ");
+            scanf(" %d", &choice);
+            system("cls");
+
+            while (getchar() != '\n');
+
+        switch(choice){
+            case 1:
+                movie_management(movies, movie_count);// if admin 
+                break;
+            case 2:
+                fund_management(movie_count);
+                break;
+            case 3:
+                printf("Exiting admin mode...");
+                return;
+                break;
+        }
+    }while(1);
+}
 void fund_management( int count) {
     int i;
     int choice;
     int price_input;
     int totalProfit = 0;
     FILE *funds;
+
+    funds = fopen("funds.txt", "r");
+    if (funds == NULL) {
+        printf("Error opening funds.txt .\n");
+        return;
+    }
+    for (int i = 0; i < MAX_MOVIES; i++) readFiles2Int(funds, &movies[i].ticketSold, &movies[i].profit, i);
+    fclose(funds);
 
     do{
         do{
@@ -286,7 +298,7 @@ void fund_management( int count) {
             case 1:
                 system("cls");
                 for(i = 0; i<MAX_MOVIES; i++){
-                    printf("\nMovie [%d] %s Tickets' sold: %d|Profit: P %d", i + 1, movies[i].titles, movies[i].ticketSold, movies[i].profit);
+                    printf("\nMovie [%d] %-25s Tickets' sold: %-6d|\tProfit: P %-d", i + 1, movies[i].titles, movies[i].ticketSold, movies[i].profit);
                     totalProfit += movies[i].profit;
                 }
                 printf("\nTotal Profit: P %d", totalProfit);
