@@ -86,7 +86,8 @@ int UserNumberOfSeats, UserChosenUpperBoxSeats[MAX_SEATS], UserChosenlowerBoxSea
 char UserChosenBox[20]; // Upperbox or Lower box
 
 
-int main(){
+int main()
+{
     FILE *movie = fopen("movieTitles.txt", "r");
     FILE *genre = fopen("genres.txt", "r");
     FILE *synopsis = fopen("synopsis.txt", "r");
@@ -101,8 +102,8 @@ int main(){
         printf("Error opening one or more files.\n");
         return 1;
     }
-
-    for (int i = 0; i < MAX_MOVIES; i++) {
+    
+    for (i = 0; i < MAX_MOVIES; i++) {
         readFiles(movie, movies[i].titles, i);
         readFiles(genre, movies[i].genres, i);
         readFilesDescription(synopsis, movies[i].description, i);
@@ -114,23 +115,21 @@ int main(){
     do{
         print_GUI();
         print_menu();
-        printf("Option: ");
+        printf("> ");
         scanf(" %d", &option);
         
         while (getchar() != '\n');
 
         switch(option){
 
-            //MENU LOGIC
+            					//MENU LOGIC
             case 1:
-
-
-                printf("Admin Password: "); //Password is 123;
+                printf("Admin Password: "); //Password is 123
                 scanf(" %d", &password_try);
 
                 while (getchar() != '\n');
                 
-                //sleep(1);
+               		//sleep(1);
                 if(password == password_try){
                     admin_mode();
                 } else{
@@ -195,6 +194,7 @@ int main(){
                     }
                 }while(1);
                 break;
+                
             case 3:
                 system("cls");
                 print_GUI();
@@ -217,10 +217,12 @@ int main(){
                 }
                 system("cls");
                 break;
+                
             case 4:
                 printf("Exiting program...\n");
                 return 0;
                 break;
+                
             default:
                 puts("Invalid Input!");
                 sleep(2);
@@ -229,16 +231,15 @@ int main(){
             }
     }while(1);
     
-    fclose(movie);
-    fclose(genre);
-    fclose(synopsis);
-    fclose(price);
-    fclose(schedule);
+    fclose(movie);	fclose(genre);	fclose(synopsis);	fclose(price);	fclose(schedule);
 
     return 0;
 }
+
+
 //----------------------------------------- ADMIN OPTONS ----------------------------------------------
-void admin_mode(){
+void admin_mode()
+{
     int choice;
     do{
             system("cls");
@@ -263,7 +264,9 @@ void admin_mode(){
         }
     }while(1);
 }
-void fund_management( int count) {
+
+void fund_management( int count) 
+{
     int i;
     int choice;
     int price_input;
@@ -275,7 +278,8 @@ void fund_management( int count) {
         printf("Error opening funds.txt .\n");
         return;
     }
-    for (int i = 0; i < MAX_MOVIES; i++) readFiles2Int(funds, &movies[i].ticketSold, &movies[i].profit, i);
+    
+    for (i = 0; i < MAX_MOVIES; i++) readFiles2Int(funds, &movies[i].ticketSold, &movies[i].profit, i);
     fclose(funds);
 
     do{
@@ -308,14 +312,14 @@ void fund_management( int count) {
                 printf("\nReseting the funds...");
                 Sleep(2000);
                 funds = fopen("funds.txt", "w");
-                for (int i = 0; i < MAX_MOVIES; i++) {//reseting all tickets and profit
+                for (i = 0; i < MAX_MOVIES; i++) {//reseting all tickets and profit
                     fprintf(funds, "0:0\n");
                 }
                 fclose(funds);
 
 
                 funds = fopen("funds.txt", "r");// saving the reset
-                for (int i = 0; i < MAX_MOVIES; i++) readFiles2Int(funds, &movies[i].ticketSold, &movies[i].profit, i);
+                for (i = 0; i < MAX_MOVIES; i++) readFiles2Int(funds, &movies[i].ticketSold, &movies[i].profit, i);
                 fclose(funds);
 
 
@@ -331,7 +335,9 @@ void fund_management( int count) {
     }while(1);
 
 }
-void movie_management(Movie movies[], int count) {
+
+void movie_management(Movie movies[], int count) 
+{
     int i;
     int choice;
     int price_input;
@@ -454,10 +460,15 @@ void movie_management(Movie movies[], int count) {
                     break;
                 }
                 for(i = 0; i < count; i++){
+                	redo_time:
                     printf("Enter schedule(hour minute, 24-hour format) for movie [%d] %s: ", i + 1, movies[i].titles);
-
+						
                     if (scanf("%d %d", &movies[i].startHour, &movies[i].startMinute) == 2) {
-                        
+	                        if (&movies[i].startHour>24 || &movies[i].startMinute>60)
+							{
+								puts("INVALID INPUT: PLEASE TRY AGAIN!");
+								goto redo_time;
+							}
                         fprintf(schedule, "%d:%d\n", movies[i].startHour, movies[i].startMinute);
                     } else {
                         printf("Error reading movie schedule. Please try again.\n");
@@ -477,21 +488,25 @@ void movie_management(Movie movies[], int count) {
     }while(1);
 
 }
+
 //------------------------------------------- UI -----------------------------------------------
-void print_GUI (){
-	printf("        Welcome to CINEMA SEATS\n");
-	printf("=======================================\n");
-	printf("By Adeva - Aquino - Buhayan - Lo Priego\n");
-	printf("=======================================\n");
+void print_GUI ()
+{
+	puts("        Welcome to CINEMA SEATS");
+	puts("=========================================");
+	puts("|By Adeva - Aquino - Buhayan - Lo Priego|");
+	puts("=========================================");
 }
-void print_menu (){ 
-	printf("MENU OPTIONS:\n");
-	printf("\t[1] Enter as ADMIN\n");
-	printf("\t[2] Enter as CUSTOMER\n");
-	printf("\t[3] View Available Movies\n");
-	printf("\t[4] Exit program\n");
+void print_menu ()
+{ 
+	puts("MENU OPTIONS:");
+	puts("\t[1] Enter as ADMIN");
+	puts("\t[2] Enter as CUSTOMER");
+	puts("\t[3] View Available Movies");
+	puts("\t[4] Exit program");
 }
-void print_with_dash(const char *str) {//just prints the entered string with dashes ex. --hello--
+void print_with_dash(const char *str) 
+{										//just prints the entered string with dashes ex. --hello--
     int maxLength = 40;
     int strLength = strlen(str);
     int i;
@@ -521,7 +536,9 @@ void print_with_dash(const char *str) {//just prints the entered string with das
     
     printf("\n");
 }
-void print_movie(char movies[], char genres[], int price, int hour, int minute, char description[]){ //prints the header kumbaga
+
+void print_movie(char movies[], char genres[], int price, int hour, int minute, char description[])
+{ //prints the header kumbaga
     printf("----------------------------------------\n");
     printf("Movie Title: %s\n", movies);
     printf("Genre: %s\n", genres);
@@ -531,7 +548,9 @@ void print_movie(char movies[], char genres[], int price, int hour, int minute, 
 
 
 }
-int print_movie_seats_lowerBox(int movieIndex){ //prints the movies seats for lowerbox
+
+int print_movie_seats_lowerBox(int movieIndex)
+{ //prints the movies seats for lowerbox
     int i, j, k;
 	printf("                             ");
     print_with_dash("Cinema Seats Lower Box");
@@ -554,7 +573,9 @@ int print_movie_seats_lowerBox(int movieIndex){ //prints the movies seats for lo
         printf("\n");
     }
 }
-int print_movie_seats_upperBox(int movieIndex) {//prints the movies seats for upperbox
+
+int print_movie_seats_upperBox(int movieIndex) 
+{//prints the movies seats for upperbox
     int i, j, k;
 	printf("                             ");
     print_with_dash("Cinema Seats Upper Box");
@@ -577,8 +598,10 @@ int print_movie_seats_upperBox(int movieIndex) {//prints the movies seats for up
         printf("\n");
     }
 }
+
 //------------------------------------------ scheduling ----------------------------
-void timer(int scheduledTime){
+void timer(int scheduledTime)
+{
     int seconds = scheduledTime;
     int h, m, s;
     
@@ -622,7 +645,9 @@ void timer(int scheduledTime){
     getchar();
     
 }
-void startScheduledMovies(int i) {
+
+void startScheduledMovies(int i) 
+{
     time_t t = time(NULL);
     struct tm currentTime = *localtime(&t);
     
@@ -637,12 +662,14 @@ void startScheduledMovies(int i) {
         timer(timeDifference);
         
 }
-//----------------------------------------- algorithm for seats ---------------------------------
-void user_choose_seats_lower(int movieIndex){// where the user inputs his/her chosen seats in the lower box
+
+//----------------------------------------- Algorithm for seats ---------------------------------
+void user_choose_seats_lower(int movieIndex)
+{// where the user inputs his/her chosen seats in the lower box
     int i, index, count = 0, loop, profit, seatAvailable = 0;
     printf("How many seats are you buying?\n"); // lowerbox
     scanf(" %d", &UserNumberOfSeats);
-
+	int j;
     for (i = 0; i < UserNumberOfSeats; i++){// loops through and gets all the seats the costumer want
         do{
             loop = 0;
@@ -653,7 +680,7 @@ void user_choose_seats_lower(int movieIndex){// where the user inputs his/her ch
                 printf("Enter a new seat"); 
                 loop = 1;
             } else {
-                for (int j = 0; j < 151; j++) {
+                for (j = 0; j < 151; j++) {
                     if (movies[movieIndex].occupiedSeatsLowerBox[j] == UserChosenlowerBoxSeats[i]) {
                         printf("Seat %d is already taken. Please choose another seat.\n", UserChosenlowerBoxSeats[i]);
                         loop = 1;
@@ -699,11 +726,13 @@ void user_choose_seats_lower(int movieIndex){// where the user inputs his/her ch
 
     system("cls");
 }
-void user_choose_seats_upper(int movieIndex){// where the user inputs his/her chosen seats in the upper box
+
+void user_choose_seats_upper(int movieIndex)
+{// where the user inputs his/her chosen seats in the upper box
     int i, index, count = 0, loop, profit, seatAvailable = 0;
     printf("How many seats are you buying?\n"); // upperbox
     scanf(" %d", &UserNumberOfSeats);
-
+	int j;
     for (i = 0; i < UserNumberOfSeats; i++){// loops through and gets all the seats the costumer want
         do{
             loop = 0;
@@ -714,7 +743,7 @@ void user_choose_seats_upper(int movieIndex){// where the user inputs his/her ch
                 printf("Enter a new seat"); 
                 loop = 1;
             } else {
-                for (int j = 0; j < 112; j++) {
+                for (j = 0; j < 112; j++) {
                     if (movies[movieIndex].occupiedSeatsUpperBox[j] == UserChosenUpperBoxSeats[i]) {
                         printf("Seat %d is already taken. Please choose another seat.\n", UserChosenUpperBoxSeats[i]);
                         loop = 1;
@@ -760,7 +789,9 @@ void user_choose_seats_upper(int movieIndex){// where the user inputs his/her ch
 
     system("cls");
 }
-int find_the_first_index_with_zero_lowerbox(int OccupiedSeatsLowerBox[]) { // this basically functions as the append() function, mag start og add numbers sa first index na may 0 or sa last item. safe ni kay wala may 0 na seat number 
+
+int find_the_first_index_with_zero_lowerbox(int OccupiedSeatsLowerBox[]) 
+{ // this basically functions as the append() function, mag start og add numbers sa first index na may 0 or sa last item. safe ni kay wala may 0 na seat number 
     int i;
 	for (i = 0; i < 151; i++) {
         if (OccupiedSeatsLowerBox[i] == 0) {
@@ -768,7 +799,9 @@ int find_the_first_index_with_zero_lowerbox(int OccupiedSeatsLowerBox[]) { // th
         }
     }
 }
-int find_the_first_index_with_zero_upperbox(int OccupiedSeatsUpperBox[]) { // this basically functions as the append() function, mag start og add numbers sa first index na may 0 or sa last item. safe ni kay wala may 0 na seat number 
+
+int find_the_first_index_with_zero_upperbox(int OccupiedSeatsUpperBox[]) 
+{ // this basically functions as the append() function, mag start og add numbers sa first index na may 0 or sa last item. safe ni kay wala may 0 na seat number 
     int i;
 	for (i = 0; i < 151; i++) {
         if (OccupiedSeatsUpperBox[i] == 0) {
@@ -776,8 +809,10 @@ int find_the_first_index_with_zero_upperbox(int OccupiedSeatsUpperBox[]) { // th
         }
     }
 }
+
 //--------------------------------- reading files -----------------------------------------------------------
-void readFiles(FILE *file, char stored[MAX_TITLE_LENGTH], int index) {
+void readFiles(FILE *file, char stored[MAX_TITLE_LENGTH], int index) 
+{
     if (fgets(stored, MAX_TITLE_LENGTH, file)) {
         size_t len = strlen(stored);
         if (len > 0 && stored[len - 1] == '\n') {
@@ -785,7 +820,9 @@ void readFiles(FILE *file, char stored[MAX_TITLE_LENGTH], int index) {
         }
     }
 }
-void readFilesDescription(FILE *file, char stored[1000], int index){
+
+void readFilesDescription(FILE *file, char stored[1000], int index)
+{
     if (fgets(stored, 1000, file)) {  // Read only one line per call
         size_t len = strlen(stored);
         if (len > 0 && stored[len - 1] == '\n') {
@@ -793,12 +830,15 @@ void readFilesDescription(FILE *file, char stored[1000], int index){
         }
     }
 }
+
 void readFilesPrice(FILE *file, int *stored, int index){
     if(file != NULL){
         fscanf(file, "%d", stored);
     }
 }
-void readFiles2Int(FILE *file, int *stored,int *anotherStored, int index){
+
+void readFiles2Int(FILE *file, int *stored,int *anotherStored, int index)
+{
     char currentLine[100];
     
     if (fgets(currentLine, sizeof(currentLine), file)) {
@@ -808,14 +848,17 @@ void readFiles2Int(FILE *file, int *stored,int *anotherStored, int index){
         }
     }
 }
-void writeFundsToFile() {
+
+//Writes down the current funds into funds.txt
+void writeFundsToFile() 
+{
     FILE *funds = fopen("funds.txt", "w");
     if (!funds) {
         printf("Error opening funds.txt for writing.\n");
         return;
     }
-
-    for (int i = 0; i < MAX_MOVIES; i++) {
+	int i;
+    for (i = 0; i < MAX_MOVIES; i++) {
         fprintf(funds, "%d:%d\n", movies[i].ticketSold, movies[i].profit);
     }
 
