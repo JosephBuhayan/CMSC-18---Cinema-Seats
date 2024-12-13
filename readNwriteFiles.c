@@ -219,7 +219,12 @@ int main()
                 break;
                 
             case 4:
-                printf("Exiting program...\n");
+                printf("Exiting program.");
+                sleep(1);
+				printf(".");
+				sleep(1);
+                printf(".");
+                sleep(2);
                 return 0;
                 break;
                 
@@ -250,7 +255,8 @@ void admin_mode()
 
             while (getchar() != '\n');
 
-        switch(choice){
+        switch(choice)
+		{
             case 1:
                 movie_management(movies, movie_count);// if admin 
                 break;
