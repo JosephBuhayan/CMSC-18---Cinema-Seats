@@ -264,7 +264,15 @@ void admin_mode()
                 fund_management(movie_count);
                 break;
             case 3:
-                printf("Exiting admin mode...");
+                printf("Exiting admin mode.");
+                sleep(1);
+                printf(".");
+				sleep(1);
+                printf(".");
+                sleep(1);
+                printf(".");
+                sleep(2);
+                system("cls");
                 return;
                 break;
         }
@@ -321,6 +329,7 @@ void fund_management( int count)
                 for (i = 0; i < MAX_MOVIES; i++) {//reseting all tickets and profit
                     fprintf(funds, "0:0\n");
                 }
+                
                 fclose(funds);
 
 
@@ -391,6 +400,7 @@ void movie_management(Movie movies[], int count)
                 }
                 fclose(movie);
                 break;
+                
             case 2:
                 genre = fopen("genres.txt", "w"); 
                 if (genre == NULL) {
@@ -470,11 +480,6 @@ void movie_management(Movie movies[], int count)
                     printf("Enter schedule(hour minute, 24-hour format) for movie [%d] %s: ", i + 1, movies[i].titles);
 						
                     if (scanf("%d %d", &movies[i].startHour, &movies[i].startMinute) == 2) {
-	                        if (&movies[i].startHour>24 || &movies[i].startMinute>60)
-							{
-								puts("INVALID INPUT: PLEASE TRY AGAIN!");
-								goto redo_time;
-							}
                         fprintf(schedule, "%d:%d\n", movies[i].startHour, movies[i].startMinute);
                     } else {
                         printf("Error reading movie schedule. Please try again.\n");
@@ -503,6 +508,7 @@ void print_GUI ()
 	puts("|By Adeva - Aquino - Buhayan - Lo Priego|");
 	puts("=========================================");
 }
+
 void print_menu ()
 { 
 	puts("MENU OPTIONS:");
@@ -511,6 +517,7 @@ void print_menu ()
 	puts("\t[3] View Available Movies");
 	puts("\t[4] Exit program");
 }
+
 void print_with_dash(const char *str) 
 {										//just prints the entered string with dashes ex. --hello--
     int maxLength = 40;
@@ -816,7 +823,7 @@ int find_the_first_index_with_zero_upperbox(int OccupiedSeatsUpperBox[])
     }
 }
 
-//--------------------------------- reading files -----------------------------------------------------------
+//--------------------------------- Reading Files -----------------------------------------------------------
 void readFiles(FILE *file, char stored[MAX_TITLE_LENGTH], int index) 
 {
     if (fgets(stored, MAX_TITLE_LENGTH, file)) {
